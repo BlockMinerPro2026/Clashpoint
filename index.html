@@ -2,99 +2,355 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Страх | Все строки равны</title>
+    <title>Осколки надежды: Холод</title>
     <style>
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            background-color: black;
+            margin: 0;
             min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #1a1e2b, #0b0d14);
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-family: 'Georgia', 'Times New Roman', serif;
+            align-items: center;
+            font-family: 'Courier New', monospace;
             padding: 20px;
         }
-
-        .quote-stage {
-            position: relative;
+        .game-window {
+            max-width: 800px;
             width: 100%;
-            max-width: 900px;
-            min-height: 400px;
+            background: rgba(10, 12, 18, 0.95);
+            border: 2px solid #4a3f5e;
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 0 50px #2a1e3a, inset 0 0 20px #000;
+            backdrop-filter: blur(3px);
+        }
+        .title {
+            font-size: 28px;
+            text-align: center;
+            color: #b7a9c9;
+            text-shadow: 0 0 8px #8f7aa5, 0 0 15px black;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #5a4c6b;
+            padding-bottom: 12px;
+        }
+        .hope-bar {
+            background: #2a2335;
+            border-radius: 40px;
+            padding: 5px 12px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 15px;
+            border: 1px solid #6e5b87;
         }
-
-        .quote-line {
-            position: absolute;
-            text-align: center;
-            color: white;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+        .hope-label {
+            color: #d8ced9;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .hope-value-bg {
+            flex-grow: 1;
+            height: 16px;
+            background: #1e1828;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .hope-fill {
+            height: 100%;
             width: 100%;
-            opacity: 0;
-            animation-timing-function: ease-in-out;
-            animation-fill-mode: forwards;
+            background: linear-gradient(90deg, #7f6a9e, #b39bc8);
+            border-radius: 20px;
+            transition: width 0.3s;
         }
-
-        /* Размеры строк (4-я и 7-я такие же, как и были) */
-        .line1 { font-size: 3.8rem; }
-        .line2 { font-size: 3.5rem; }
-        .line3 { font-size: 2.9rem; }
-        .line4 { font-size: 2.8rem; }  /* четвертая */
-        .line5 { font-size: 2.8rem; }
-        .line6 { font-size: 2.6rem; font-style: italic; }
-        .line7 { font-size: 3.2rem; }  /* последняя */
-
-        /* Анимация: быстрое появление, пауза, быстрое исчезновение */
-        @keyframes standardPulse {
-            0% { opacity: 0; }
-            8% { opacity: 1; }      /* появилась */
-            80% { opacity: 1; }      /* висит */
-            92% { opacity: 0; }      /* исчезла */
-            100% { opacity: 0; }
+        .hope-number {
+            color: #c0b1d6;
+            min-width: 45px;
         }
-
-        /* Старое время — 4.5 секунды на строку, всего 31.5 сек */
-        .line1 { animation: standardPulse 4.5s 0s forwards; }
-        .line2 { animation: standardPulse 4.5s 4.5s forwards; }
-        .line3 { animation: standardPulse 4.5s 9s forwards; }
-        .line4 { animation: standardPulse 4.5s 13.5s forwards; }  /* четвертая тоже 4.5с */
-        .line5 { animation: standardPulse 4.5s 18s forwards; }
-        .line6 { animation: standardPulse 4.5s 22.5s forwards; }
-        .line7 { animation: standardPulse 4.5s 27s forwards; }    /* последняя тоже 4.5с */
-
-        /* Адаптация под мобильные */
-        @media (max-width: 600px) {
-            .line1 { font-size: 3rem; }
-            .line2 { font-size: 2.8rem; }
-            .line3 { font-size: 2.4rem; }
-            .line4 { font-size: 2.3rem; }
-            .line5 { font-size: 2.3rem; }
-            .line6 { font-size: 2.1rem; }
-            .line7 { font-size: 2.6rem; }
-            .quote-stage { min-height: 320px; }
+        .scene {
+            background: #14121c;
+            border: 2px solid #3d334d;
+            border-radius: 24px;
+            padding: 25px;
+            min-height: 220px;
+            box-shadow: inset 0 0 30px #050308;
+            color: #ddd2e6;
+            font-size: 18px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            margin-bottom: 25px;
+        }
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .choice-btn {
+            background: #1f1b2a;
+            border: 2px solid #5e4b70;
+            color: #e2d3f0;
+            padding: 16px 20px;
+            font-size: 18px;
+            font-family: inherit;
+            border-radius: 60px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 5px 0 #0d0b12;
+        }
+        .choice-btn:hover:not(:disabled) {
+            background: #463556;
+            border-color: #b384d4;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #0d0b12;
+        }
+        .choice-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: #3d2e4a;
+        }
+        .save-info {
+            background: #0e0c14;
+            padding: 15px;
+            border-radius: 30px;
+            border: 2px solid #514462;
+            color: #a392bc;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            font-size: 16px;
+        }
+        .save-code {
+            background: #231f30;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-family: monospace;
+            color: #dbbaff;
+            border: 1px solid #8b73a3;
+            letter-spacing: 2px;
+        }
+        .reset-link {
+            background: #332b40;
+            color: #d3bcf0;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            border: 1px solid #7b6097;
+        }
+        .reset-link:hover {
+            background: #534169;
+            color: white;
         }
     </style>
 </head>
 <body>
-    <div class="quote-stage">
-        <span class="quote-line line1">Страх,</span>
-        <span class="quote-line line2">что это такое?</span>
-        <span class="quote-line line3">Это не просто эмоция,</span>
-        <span class="quote-line line4">это страж на пороге всего нового.</span>
-        <span class="quote-line line5">он не запирает дверь,</span>
-        <span class="quote-line line6">он проверяет,</span>
-        <span class="quote-line line7">действительно ли ты готов войти.</span>
+    <div class="game-window">
+        <div class="title">❄️ ОСКОЛКИ НАДЕЖДЫ ❄️</div>
+        <div class="hope-bar">
+            <span class="hope-label">НАДЕЖДА</span>
+            <div class="hope-value-bg">
+                <div id="hopeFill" class="hope-fill" style="width: 100%;"></div>
+            </div>
+            <span id="hopeNumber" class="hope-number">100%</span>
+        </div>
+        <div id="sceneText" class="scene">
+            Ты открываешь глаза. Потолок подъезда осыпается. Пальцы не слушаются. Рядом мятная бумажка: «Школа на Мира. Или умри здесь. Мне всё равно».
+        </div>
+        <div id="choicesContainer" class="choices">
+            <!-- кнопки выборов -->
+        </div>
+
+        <div class="save-info">
+            <span>💾 Код сохранения главы 1:</span>
+            <span id="saveCodeDisplay" class="save-code">???</span>
+            <button id="resetBtn" class="reset-link">🔄 Начать заново</button>
+        </div>
     </div>
-    <!--
-        Ритм: 4.5 секунды на каждую строку (включая 4-ю и 7-ю).
-        Общая длительность: 31.5 секунды.
-    -->
+
+    <script>
+        (function() {
+            // Состояние игры
+            let hope = 100;
+            let step = 'start';
+            let flagFoundKey = false;
+            let flagTrustGirl = false;
+            let flagWentRight = false;
+
+            // Элементы
+            const sceneEl = document.getElementById('sceneText');
+            const choicesEl = document.getElementById('choicesContainer');
+            const hopeFill = document.getElementById('hopeFill');
+            const hopeNumber = document.getElementById('hopeNumber');
+            const saveCodeSpan = document.getElementById('saveCodeDisplay');
+
+            // Обновление интерфейса
+            function updateHope() {
+                hope = Math.min(100, Math.max(0, hope));
+                hopeFill.style.width = hope + '%';
+                hopeNumber.innerText = hope + '%';
+            }
+
+            // Генерация кода сохранения
+            function generateSaveCode() {
+                // Формат: HOPE-FLAGKEY-FLAGGIRL-FLAGRIGHT-STEP
+                const flagKeyStr = flagFoundKey ? 'K1' : 'K0';
+                const flagGirlStr = flagTrustGirl ? 'G1' : 'G0';
+                const flagRightStr = flagWentRight ? 'R1' : 'R0';
+                return `SAVE1-${hope}-${flagKeyStr}-${flagGirlStr}-${flagRightStr}-${step}`;
+            }
+
+            // Обновить код сохранения
+            function updateSaveCode() {
+                saveCodeSpan.innerText = generateSaveCode();
+            }
+
+            // Отрисовка сцены
+            function renderScene() {
+                updateHope();
+                updateSaveCode();
+
+                // Очищаем кнопки
+                choicesEl.innerHTML = '';
+
+                if (hope <= 0) {
+                    sceneEl.innerText = '❄️ Холод сжимает сердце. Ноги подкашиваются. Ты падаешь в снег и больше не встаёшь. Надежды больше нет. Конец.';
+                    return;
+                }
+
+                // Сценарии
+                if (step === 'start') {
+                    sceneEl.innerText = 'Ты в подъезде. Снаружи завывает ветер. На полу — та самая записка. В кармане пусто. Что делать?';
+                    addChoice('Выйти на улицу', 'street');
+                    addChoice('Осмотреть подъезд', 'search_house');
+                }
+                else if (step === 'street') {
+                    sceneEl.innerText = 'Улица утопает в сугробах. Вдали виден силуэт школы. С другой стороны — тёмный парк.';
+                    addChoice('Идти к школе', 'school_gates');
+                    addChoice('Зайти в парк', 'park');
+                }
+                else if (step === 'search_house') {
+                    sceneEl.innerText = 'Ты обшариваешь подъезд. В старой почтовой ячейке — ржавый ключ с нацарапанным словом "подвал".';
+                    flagFoundKey = true;
+                    hope = Math.min(100, hope + 5);
+                    addChoice('Взять ключ и выйти на улицу', 'street');
+                }
+                else if (step === 'park') {
+                    hope -= 20;
+                    sceneEl.innerText = 'В парке темно. Ты слышишь шаги за спиной, но никого нет. Надежда падает. На скамейке сидит девочка в старой форме.';
+                    addChoice('Подойти к девочке', 'girl_meet');
+                    addChoice('Бежать к школе', 'school_gates');
+                }
+                else if (step === 'girl_meet') {
+                    sceneEl.innerText = 'Девочка поднимает глаза: "Ты тоже ищешь тепло? Его нет. Нигде нет." Она протягивает тебе старый компас.';
+                    flagTrustGirl = true;
+                    hope += 10;
+                    addChoice('Взять компас и идти в школу', 'school_gates');
+                }
+                else if (step === 'school_gates') {
+                    let text = 'Ты стоишь перед школой. Окна выбиты, внутри темно. Дверь приоткрыта.';
+                    if (flagFoundKey) text += ' Ключ греет карман.';
+                    if (hope < 30) text += ' Сил почти не осталось.';
+                    sceneEl.innerText = text;
+
+                    if (flagFoundKey) {
+                        addChoice('Открыть дверь ключом (подвал)', 'basement');
+                    }
+                    addChoice('Войти через главный вход', 'main_hall');
+                    addChoice('Постучать (крикнуть)', 'knock');
+                }
+                else if (step === 'knock') {
+                    hope -= 15;
+                    sceneEl.innerText = 'Тишина. Никто не ответил. Только снег скрипит. Надежда тает.';
+                    addChoice('Войти внутрь', 'main_hall');
+                }
+                else if (step === 'main_hall') {
+                    hope -= 5;
+                    sceneEl.innerText = 'Вестибюль завален мусором. На стене граффити: "ОНИ ВСЕ ЕЩЁ ЗДЕСЬ". Слышен шорох.';
+                    addChoice('Пойти на шорох (направо)', 'right_wing');
+                    addChoice('Подняться на второй этаж', 'second_floor');
+                }
+                else if (step === 'right_wing') {
+                    flagWentRight = true;
+                    sceneEl.innerText = 'Ты заходишь в класс. Там сидит человек в капюшоне. Он не двигается. Рядом дневник.';
+                    addChoice('Открыть дневник', 'diary');
+                    addChoice('Подойти к человеку', 'stranger');
+                }
+                else if (step === 'diary') {
+                    hope += 15;
+                    sceneEl.innerText = 'Дневник девочки. Последняя запись: "Я оставила ключ в подъезде, чтобы кто-то нашёл. Надеюсь, это будешь ты. Иди в подвал. Там правда."';
+                    addChoice('Спуститься в подвал', 'basement');
+                    addChoice('Остаться здесь', 'wait_end');
+                }
+                else if (step === 'stranger') {
+                    hope -= 25;
+                    sceneEl.innerText = 'Человек резко поворачивается — это манекен, но ты испугался. Надежда падает. Из кармана манекена торчит ключ.';
+                    flagFoundKey = true;
+                    addChoice('Взять ключ и в подвал', 'basement');
+                }
+                else if (step === 'basement') {
+                    if (hope >= 30) {
+                        sceneEl.innerText = 'В подвале тепло. Горит свеча. На стене висит карта и послание: "Ты прошёл первый холод. Хочешь увидеть настоящее? Жди главу 2."\n\n➡️ Продолжение следует...';
+                        // здесь конец первой главы
+                        step = 'end_chapter';
+                        choicesEl.innerHTML = '';  // нет кнопок
+                    } else {
+                        hope -= 40;
+                        sceneEl.innerText = 'Слишком слаб. Ты падаешь на бетон. Холод забирает тебя. Надежды больше нет.';
+                    }
+                }
+                else if (step === 'second_floor') {
+                    hope -= 20;
+                    sceneEl.innerText = 'На втором этаже обрыв. Лестницы нет. Ты едва не падаешь. Надежда уходит.';
+                    addChoice('Вернуться вниз', 'main_hall');
+                }
+                else if (step === 'wait_end') {
+                    hope -= 60;
+                    sceneEl.innerText = 'Ты ждёшь. Ничего не происходит. Только холод сковывает тело. Конец.';
+                }
+                else if (step === 'end_chapter') {
+                    // финал главы
+                }
+            }
+
+            function addChoice(text, nextStep) {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.innerText = text;
+                btn.onclick = () => {
+                    step = nextStep;
+                    renderScene();
+                };
+                choicesEl.appendChild(btn);
+            }
+
+            // Сброс игры
+            function resetGame() {
+                hope = 100;
+                step = 'start';
+                flagFoundKey = false;
+                flagTrustGirl = false;
+                flagWentRight = false;
+                renderScene();
+            }
+
+            // Восстановление из сохранения (можно вставить код руками, но для авто пока без)
+            // По желанию позже добавим
+
+            document.getElementById('resetBtn').addEventListener('click', resetGame);
+
+            // Запуск
+            resetGame();
+        })();
+    </script>
 </body>
 </html>
