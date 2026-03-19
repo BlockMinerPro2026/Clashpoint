@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Осколки надежды — Глава 1</title>
+    <title>Осколки надежды — Главы 1-2 (исправлено)</title>
     <style>
         * {
             margin: 0;
@@ -27,6 +27,14 @@
             border: 2px solid #2a2a35;
             border-radius: 24px;
             padding: 40px;
+        }
+
+        .chapter-badge {
+            color: #7a6a9a;
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
         }
 
         .scene {
@@ -110,12 +118,6 @@
             cursor: not-allowed;
         }
 
-        .arrow.disabled:hover {
-            background: #111117;
-            border-color: #33333f;
-            color: #d0d0da;
-        }
-
         .save-code {
             background: #0f0f17;
             border: 2px solid #333340;
@@ -127,24 +129,13 @@
             font-size: 18px;
             letter-spacing: 1px;
         }
-
-        .save-code:focus {
-            outline: none;
-            border-color: #4a4a66;
-            background: #14141f;
-        }
     </style>
 </head>
 <body>
     <div class="game">
-        <div id="sceneText" class="scene">
-            Загрузка...
-        </div>
-
-        <div id="choicesContainer" class="choices">
-            <!-- выборы -->
-        </div>
-
+        <div class="chapter-badge" id="chapterDisplay">❄️ Глава 1: Холод ❄️</div>
+        <div id="sceneText" class="scene">Загрузка...</div>
+        <div id="choicesContainer" class="choices"></div>
         <div class="bottom-panel">
             <div class="nav-arrows">
                 <div id="arrowLeft" class="arrow">←</div>
@@ -157,50 +148,70 @@
     <script>
         (function() {
             // Состояние игры
+            let chapter = 1;
             let scene = 'start';
+            
+            // Флаги Главы 1
             let metGirl = false;
             let foundKey = false;
             let injured = false;
             let park = false;
+            
+            // Флаги Главы 2
+            let metStranger = false;
+            let trust = 50;
+            let foundDiary = false;
+            let helped = false;
+            
             let ending = null;
 
-            // История: просто массив текстов
+            // История
             let history = [];
             let historyIndex = -1;
             let isViewingHistory = false;
 
+            const chapterDisplay = document.getElementById('chapterDisplay');
             const sceneEl = document.getElementById('sceneText');
             const choicesEl = document.getElementById('choicesContainer');
             const saveField = document.getElementById('saveCodeField');
             const arrowLeft = document.getElementById('arrowLeft');
             const arrowRight = document.getElementById('arrowRight');
 
-            function updateCode() {
-                const code = [scene, metGirl ? 1 : 0, foundKey ? 1 : 0, injured ? 1 : 0, park ? 1 : 0, ending || 'none'].join('|');
-                saveField.value = code;
+            function updateChapterDisplay() {
+                if (ending && !ending.includes('ch2')) {
+                    chapterDisplay.innerText = '❄️ Финал Главы 1 ❄️';
+                } else if (ending) {
+                    chapterDisplay.innerText = '❄️ Финал Главы 2 ❄️';
+                } else if (chapter === 1) {
+                    chapterDisplay.innerText = '❄️ Глава 1: Холод ❄️';
+                } else {
+                    chapterDisplay.innerText = '❄️ Глава 2: Тени ❄️';
+                }
             }
 
-            function loadCode(code) {
-                try {
-                    const p = code.split('|');
-                    if (p.length >= 6) {
-                        scene = p[0];
-                        metGirl = p[1] === '1';
-                        foundKey = p[2] === '1';
-                        injured = p[3] === '1';
-                        park = p[4] === '1';
-                        ending = p[5] === 'none' ? null : p[5];
-                        
-                        // Сбрасываем историю при загрузке
-                        history = [];
-                        historyIndex = -1;
-                        isViewingHistory = false;
-                        
-                        render();
-                    }
-                } catch (e) {
-                    alert('неверный код');
-                }
+            function updateCode() {
+                // Сохраняем все флаги в читаемом виде
+                const flags = [];
+                
+                if (metGirl) flags.push('видел девушку');
+                if (foundKey) flags.push('есть ключ');
+                if (injured) flags.push('ранен');
+                if (park) flags.push('был в парке');
+                if (metStranger) flags.push('встретил незнакомца');
+                if (foundDiary) flags.push('нашёл дневник');
+                if (helped) flags.push('помог кому-то');
+                
+                let trustText = '';
+                if (trust >= 70) trustText = 'доверие высокое';
+                else if (trust >= 40) trustText = 'доверие среднее';
+                else trustText = 'доверие низкое';
+                
+                let code = `глава ${chapter} | сцена: ${scene}`;
+                if (flags.length > 0) code += ` | ${flags.join(', ')}`;
+                code += ` | ${trustText}`;
+                if (ending) code += ` | концовка: ${ending}`;
+                
+                saveField.value = code;
             }
 
             function addToHistory(text) {
@@ -215,7 +226,6 @@
                     sceneEl.innerText = history[index];
                     choicesEl.innerHTML = '';
                     
-                    // В истории только кнопка "дальше"
                     const btn = document.createElement('button');
                     btn.className = 'choice';
                     btn.innerText = '→ дальше';
@@ -236,38 +246,63 @@
                 arrowRight.classList.toggle('disabled', historyIndex >= history.length - 1 || !isViewingHistory);
             }
 
-            function addChoice(text, next) {
+            function addChoice(text, nextScene, nextChapter = null) {
                 const btn = document.createElement('button');
                 btn.className = 'choice';
                 btn.innerText = text;
                 btn.onclick = () => {
-                    scene = next;
+                    if (nextChapter !== null) {
+                        chapter = nextChapter;
+                    }
+                    scene = nextScene;
+                    ending = null; // сбрасываем концовку при переходе
+                    render();
+                };
+                choicesEl.appendChild(btn);
+            }
+
+            function addTrustChoice(text, nextScene, trustDelta, nextChapter = null) {
+                const btn = document.createElement('button');
+                btn.className = 'choice';
+                btn.innerText = text;
+                btn.onclick = () => {
+                    trust = Math.min(100, Math.max(0, trust + trustDelta));
+                    if (nextChapter !== null) {
+                        chapter = nextChapter;
+                    }
+                    scene = nextScene;
+                    ending = null; // сбрасываем концовку при переходе
                     render();
                 };
                 choicesEl.appendChild(btn);
             }
 
             function render() {
-                // Если смотрим историю — не обновляем
-                if (isViewingHistory) {
-                    return;
-                }
+                if (isViewingHistory) return;
 
                 choicesEl.innerHTML = '';
+                updateChapterDisplay();
 
+                // Концовки
                 if (ending) {
                     let text = '';
-                    if (ending === 'injured') {
-                        text = 'Ты падаешь, разбиваешь колено в кровь. Больно, но ты жив. Придётся хромать дальше.';
-                    }
-                    else if (ending === 'freeze') {
-                        text = 'Холод сковывает тело. Ты садишься у стены и закрываешь глаза. Снег заметает твой след.';
-                    }
-                    else if (ending === 'basement') {
-                        text = 'В подвале ты находишь старый дневник. Последняя запись: "Если ты это читаешь — я жду тебя в спортзале. Там продолжение. Глава 2..."';
-                    }
-                    else if (ending === 'run') {
-                        text = 'Ты уходишь из города. Но вдали видишь силуэт школы. Ответы остались там. Ты вернёшься.';
+                    if (ending === 'basement_end_ch1') {
+                        text = 'В подвале ты находишь старый дневник. Последняя запись: "Если ты это читаешь — я жду тебя в спортзале. Там продолжение."\n\n❄️ Конец Главы 1.';
+                        addChoice('→ начать Главу 2', 'start_ch2', 2);
+                    } else if (ending === 'injured_end_ch1') {
+                        text = 'Ты падаешь, разбиваешь колено в кровь. Больно, но ты жив. Придётся хромать дальше.\n\n❄️ Конец Главы 1.';
+                        addChoice('→ начать Главу 2', 'start_ch2', 2);
+                    } else if (ending === 'run_end_ch1') {
+                        text = 'Ты уходишь из города. Но вдали видишь силуэт школы. Ответы остались там.\n\n❄️ Конец Главы 1.';
+                        addChoice('→ начать Главу 2', 'start_ch2', 2);
+                    } else if (ending === 'trust_ending_ch2') {
+                        text = 'Незнакомец кивает. "Ты прошёл. Пойдём, я покажу тебе, где остальные." Вы уходите в темноту вместе.\n\n❄️ Конец Главы 2. Продолжение в Главе 3...';
+                    } else if (ending === 'alone_ending_ch2') {
+                        text = 'Ты остаёшься один. Вокруг только тени. Кажется, ты выбрал не ту сторону.\n\n❄️ Конец Главы 2. Продолжение в Главе 3...';
+                    } else if (ending === 'basement_ending_ch2') {
+                        text = 'Ты решаешь остаться в подвале. Здесь тихо и безопасно. По крайней мере, пока.\n\n❄️ Конец Главы 2. Продолжение в Главе 3...';
+                    } else if (ending === 'girl_ending_ch2') {
+                        text = 'Девушка с фото берёт тебя за руку. "Наконец-то ты здесь. Я так долго ждала." Вы уходите вместе в ночь.\n\n❄️ Конец Главы 2. Продолжение в Главе 3...';
                     }
                     sceneEl.innerText = text;
                     addToHistory(text);
@@ -277,93 +312,386 @@
 
                 let text = '';
 
-                if (scene === 'start') {
-                    text = 'Ты открываешь глаза. Потолок подъезда осыпается. Рядом — мёртвая девушка. В её руке мятая записка: "Школа №7. Там правда."';
-                    addChoice('осмотреть девушку', 'girl');
-                    addChoice('выйти на улицу', 'street');
-                    addChoice('осмотреть подъезд', 'search');
-                }
-                else if (scene === 'girl') {
-                    text = 'Ты наклоняешься. У девушки зажата старая фотография — школа, класс, ученики. Твоего лица нет на снимке.';
-                    metGirl = true;
-                    addChoice('взять фото и выйти', 'street');
-                }
-                else if (scene === 'search') {
-                    text = 'В старой почтовой ячейке пусто. Только мусор.';
-                    addChoice('выйти на улицу', 'street');
-                }
-                else if (scene === 'street') {
-                    text = 'Улица пуста. Мороз. Вдалеке видна школа. С другой стороны — тёмный парк.';
-                    if (injured) text += ' Ты хромаешь.';
-                    addChoice('идти к школе', 'school');
-                    addChoice('зайти в парк', 'park');
-                }
-                else if (scene === 'park') {
-                    park = true;
-                    text = 'В парке темно. На скамейке сидит девочка в школьной форме.';
-                    addChoice('подойти', 'girlpark');
-                    addChoice('бежать к школе', 'school');
-                }
-                else if (scene === 'girlpark') {
-                    text = 'Девочка поднимает голову. "Ты тоже ищешь правду? Иди в школу. Там ответы." Она исчезает.';
-                    addChoice('идти в школу', 'school');
-                }
-                else if (scene === 'school') {
-                    text = 'Школа №7. Окна выбиты. Дверь приоткрыта.';
-                    if (foundKey) text += ' Ключ в кармане.';
-                    if (metGirl) text += ' Фотография не даёт покоя.';
-                    if (injured) text += ' Нога болит.';
-                    addChoice('войти', 'hall');
-                }
-                else if (scene === 'hall') {
-                    text = 'Вестибюль завален мусором. На стене граффити: "ОНИ ЗНАЮТ". Слышен шорох.';
-                    addChoice('пойти на шорох', 'class');
-                    addChoice('подняться наверх', 'up');
-                    
-                    if (foundKey) {
-                        addChoice('спуститься в подвал', 'basementEnd');
-                    } else {
-                        addChoice('спуститься в подвал', 'basement_locked');
+                // ГЛАВА 1
+                if (chapter === 1) {
+                    if (scene === 'start') {
+                        text = 'Ты открываешь глаза. Потолок подъезда осыпается. Рядом — мёртвая девушка. В её руке мятая записка: "Школа №7. Там правда."';
+                        addChoice('осмотреть девушку', 'girl');
+                        addChoice('выйти на улицу', 'street');
+                        addChoice('осмотреть подъезд', 'search');
                     }
-                }
-                else if (scene === 'basement_locked') {
-                    text = 'Дверь в подвал заперта. Нужен ключ.';
-                    addChoice('вернуться в коридор', 'hall');
-                }
-                else if (scene === 'class') {
-                    text = 'В классе сидит человек в капюшоне. Рядом дневник.';
-                    addChoice('открыть дневник', 'diary');
-                    addChoice('подойти к человеку', 'man');
-                    addChoice('вернуться в коридор', 'hall');
-                }
-                else if (scene === 'diary') {
-                    text = 'Дневник девочки. "Я спрятала ключ в классе. Найди его."';
-                    addChoice('обыскать класс', 'class');
-                }
-                else if (scene === 'man') {
-                    if (!foundKey) {
-                        text = 'Это манекен. В кармане торчит ключ с надписью "подвал".';
-                        foundKey = true;
-                        addChoice('взять ключ', 'hall');
-                    } else {
-                        text = 'Это манекен. В кармане пусто.';
+                    else if (scene === 'girl') {
+                        text = 'Ты наклоняешься. У девушки зажата старая фотография — школа, класс, ученики. Твоего лица нет на снимке.';
+                        metGirl = true;
+                        addChoice('взять фото и выйти', 'street');
+                    }
+                    else if (scene === 'search') {
+                        text = 'В старой почтовой ячейке пусто. Только мусор.';
+                        addChoice('выйти на улицу', 'street');
+                    }
+                    else if (scene === 'street') {
+                        text = 'Улица пуста. Мороз. Вдалеке видна школа. С другой стороны — тёмный парк.';
+                        if (injured) text += ' Ты хромаешь.';
+                        addChoice('идти к школе', 'school');
+                        addChoice('зайти в парк', 'park');
+                    }
+                    else if (scene === 'park') {
+                        park = true;
+                        text = 'В парке темно. На скамейке сидит девочка в школьной форме.';
+                        addChoice('подойти', 'girlpark');
+                        addChoice('бежать к школе', 'school');
+                    }
+                    else if (scene === 'girlpark') {
+                        text = 'Девочка поднимает голову. "Ты тоже ищешь правду? Иди в школу. Там ответы." Она исчезает.';
+                        addChoice('идти в школу', 'school');
+                    }
+                    else if (scene === 'school') {
+                        text = 'Школа №7. Окна выбиты. Дверь приоткрыта.';
+                        if (foundKey) text += ' Ключ в кармане.';
+                        if (metGirl) text += ' Фотография не даёт покоя.';
+                        if (injured) text += ' Нога болит.';
+                        addChoice('войти', 'hall');
+                    }
+                    else if (scene === 'hall') {
+                        text = 'Вестибюль завален мусором. На стене граффити: "ОНИ ЗНАЮТ". Слышен шорох.';
+                        addChoice('пойти на шорох', 'class');
+                        addChoice('подняться наверх', 'up');
+                        
+                        if (foundKey) {
+                            addChoice('спуститься в подвал', 'basementEnd_ch1');
+                        } else {
+                            addChoice('спуститься в подвал', 'basement_locked');
+                        }
+                    }
+                    else if (scene === 'basement_locked') {
+                        text = 'Дверь в подвал заперта. Нужен ключ.';
                         addChoice('вернуться в коридор', 'hall');
                     }
+                    else if (scene === 'class') {
+                        text = 'В классе сидит человек в капюшоне. Рядом дневник.';
+                        addChoice('открыть дневник', 'diary');
+                        addChoice('подойти к человеку', 'man');
+                        addChoice('вернуться в коридор', 'hall');
+                    }
+                    else if (scene === 'diary') {
+                        text = 'Дневник девочки. "Я спрятала ключ в классе. Найди его."';
+                        addChoice('обыскать класс', 'class');
+                    }
+                    else if (scene === 'man') {
+                        if (!foundKey) {
+                            text = 'Это манекен. В кармане торчит ключ с надписью "подвал".';
+                            foundKey = true;
+                            addChoice('взять ключ', 'hall');
+                        } else {
+                            text = 'Это манекен. В кармане пусто.';
+                            addChoice('вернуться в коридор', 'hall');
+                        }
+                    }
+                    else if (scene === 'up') {
+                        text = 'На втором этаже обрыв. Доски провалились.';
+                        addChoice('вернуться', 'hall');
+                        addChoice('прыгнуть', 'jump');
+                    }
+                    else if (scene === 'jump') {
+                        injured = true;
+                        text = 'Ты прыгаешь, подворачиваешь ногу. Больно, но можно идти. Надо возвращаться на улицу.';
+                        addChoice('вернуться на улицу', 'street');
+                    }
+                    else if (scene === 'basementEnd_ch1') {
+                        ending = 'basement_end_ch1';
+                        render();
+                        return;
+                    }
                 }
-                else if (scene === 'up') {
-                    text = 'На втором этаже обрыв. Доски провалились.';
-                    addChoice('вернуться', 'hall');
-                    addChoice('прыгнуть', 'jump');
-                }
-                else if (scene === 'jump') {
-                    injured = true;
-                    text = 'Ты прыгаешь, подворачиваешь ногу. Больно, но можно идти. Надо возвращаться на улицу.';
-                    addChoice('вернуться на улицу', 'street');
-                }
-                else if (scene === 'basementEnd') {
-                    ending = 'basement';
-                    render();
-                    return;
+                // ГЛАВА 2
+                else if (chapter === 2) {
+                    // Специальная стартовая сцена для главы 2
+                    if (scene === 'start_ch2') {
+                        text = 'Ты в подвале. Слабо горит свет. На полу чьи-то следы. Кто-то был здесь недавно.';
+                        
+                        if (injured) text += ' Нога всё ещё болит, но терпимо.';
+                        if (metGirl) text += ' Фотография девочки жжёт карман.';
+                        
+                        addChoice('осмотреть следы', 'tracks_ch2');
+                        addChoice('пойти на свет', 'light_ch2');
+                        addChoice('крикнуть', 'shout_ch2');
+                    }
+                    else if (scene === 'shout_ch2') {
+                        text = '— Есть кто? Тишина. Но потом — шаги. Кто-то идёт со стороны коридора.';
+                        addChoice('ждать', 'stranger_meet_ch2');
+                        addChoice('спрятаться', 'hide_ch2');
+                    }
+                    else if (scene === 'hide_ch2') {
+                        text = 'Ты прячешься за старыми ящиками. Мимо проходит человек в тёмной одежде. Он не замечает тебя.';
+                        metStranger = true;
+                        addChoice('вылезти и пойти за ним', 'follow_stranger_ch2');
+                        addChoice('остаться в укрытии', 'stay_hidden_ch2');
+                    }
+                    else if (scene === 'stay_hidden_ch2') {
+                        text = 'Ты остаёшься в укрытии. Человек уходит. Становится тихо.';
+                        addChoice('выйти и осмотреть подвал', 'explore_basement_ch2');
+                    }
+                    else if (scene === 'stranger_meet_ch2') {
+                        text = 'Из темноты выходит мужчина. "Ты из школы? Я ищу выживших. Здесь опасно."';
+                        metStranger = true;
+                        addTrustChoice('довериться и пойти с ним', 'trust_path_ch2', +20);
+                        addTrustChoice('сказать, что сам справишься', 'lie_path_ch2', -10);
+                    }
+                    else if (scene === 'trust_path_ch2') {
+                        text = '"Хорошо. Пойдём, здесь есть убежище. Но надо быть осторожным." Он протягивает руку.';
+                        addTrustChoice('пойти', 'shelter_path_ch2', +10);
+                        addTrustChoice('спросить, кто он', 'ask_who_ch2', 0);
+                    }
+                    else if (scene === 'ask_who_ch2') {
+                        text = '"Меня зовут Сергей. Я был учителем в этой школе. А ты?"';
+                        addTrustChoice('представиться', 'shelter_path_ch2', +5);
+                        addTrustChoice('соврать', 'shelter_path_ch2', -5);
+                    }
+                    else if (scene === 'lie_path_ch2') {
+                        text = '"Как хочешь. Но здесь ты долго не протянешь." Он уходит в темноту.';
+                        trust -= 10;
+                        addChoice('пойти за ним', 'follow_stranger_ch2');
+                        addChoice('осмотреться в подвале', 'explore_basement_ch2');
+                    }
+                    else if (scene === 'shelter_path_ch2') {
+                        text = 'Вы идёте по тёмному коридору. Он приводит к старой двери. "За ней убежище."';
+                        
+                        if (trust >= 70) {
+                            addChoice('войти', 'shelter_good_ch2');
+                        } else if (trust >= 40) {
+                            addChoice('войти', 'shelter_neutral_ch2');
+                        } else {
+                            addChoice('войти', 'shelter_bad_ch2');
+                        }
+                        addChoice('остановиться и спросить ещё раз', 'doubt_ch2');
+                    }
+                    else if (scene === 'doubt_ch2') {
+                        text = '"Ты мне не доверяешь? Понимаю. Но выбора у тебя немного."';
+                        addTrustChoice('всё же войти', 'shelter_neutral_ch2', +5);
+                        addTrustChoice('развернуться и уйти', 'explore_basement_ch2', -10);
+                    }
+                    else if (scene === 'shelter_good_ch2') {
+                        text = 'За дверью маленькая комната. Тепло, горит свеча. Еда, вода. "Здесь можно переждать."';
+                        addChoice('остаться здесь', 'basement_ending_ch2');
+                        addChoice('спросить, что дальше', 'ask_future_ch2');
+                    }
+                    else if (scene === 'shelter_neutral_ch2') {
+                        text = 'За дверью пустая комната. Ничего особенного. "Здесь безопасно, но ненадолго."';
+                        addChoice('остаться', 'basement_ending_ch2');
+                        addChoice('пойти дальше с ним', 'follow_deeper_ch2');
+                    }
+                    else if (scene === 'shelter_bad_ch2') {
+                        text = 'За дверью темнота. Ты делаешь шаг и понимаешь — здесь никого нет. Он исчез.';
+                        addChoice('вернуться в подвал', 'explore_basement_ch2');
+                    }
+                    else if (scene === 'ask_future_ch2') {
+                        text = '"Надо выбираться из города. Говорят, на севере есть лагерь."';
+                        addChoice('согласиться идти на север', 'north_ending_ch2');
+                        addChoice('остаться в школе', 'basement_ending_ch2');
+                    }
+                    else if (scene === 'follow_deeper_ch2') {
+                        text = 'Вы идёте дальше по коридору. Впереди лестница наверх.';
+                        addChoice('подняться', 'gym_ch2');
+                    }
+                    else if (scene === 'follow_stranger_ch2') {
+                        text = 'Ты идёшь за ним на безопасном расстоянии. Он заходит в какой-то класс.';
+                        addChoice('зайти за ним', 'classroom_follow_ch2');
+                        addChoice('подождать снаружи', 'wait_outside_ch2');
+                    }
+                    else if (scene === 'wait_outside_ch2') {
+                        text = 'Ты ждёшь. Проходит минута, другая. Тишина.';
+                        addChoice('зайти в класс', 'classroom_empty_ch2');
+                        addChoice('вернуться в подвал', 'explore_basement_ch2');
+                    }
+                    else if (scene === 'classroom_empty_ch2') {
+                        text = 'В классе никого. Только открытое окно и следы на подоконнике. Он ушёл.';
+                        addChoice('вылезти в окно', 'outside_ch2');
+                        addChoice('вернуться', 'explore_basement_ch2');
+                    }
+                    else if (scene === 'outside_ch2') {
+                        text = 'Ты на улице. Мороз. Вдалеке виднеется лес.';
+                        addChoice('идти к лесу', 'forest_ch2');
+                    }
+                    else if (scene === 'forest_ch2') {
+                        if (trust >= 60) {
+                            ending = 'trust_ending_ch2';
+                        } else {
+                            ending = 'alone_ending_ch2';
+                        }
+                        render();
+                        return;
+                    }
+                    else if (scene === 'tracks_ch2') {
+                        text = 'Следы ведут к старой двери в углу подвала. Она приоткрыта.';
+                        addChoice('открыть дверь', 'behind_door_ch2');
+                        addChoice('осмотреть ящики рядом', 'search_boxes_ch2');
+                    }
+                    else if (scene === 'behind_door_ch2') {
+                        text = 'За дверью маленькая комната. На стене — карта школы. Кто-то отмечал пути карандашом.';
+                        addChoice('изучить карту', 'map_ch2');
+                    }
+                    else if (scene === 'map_ch2') {
+                        text = 'На карте обведены спортзал, крыша и подвал. Есть надпись: "ОНИ ЗДЕСЬ. НЕ ХОДИ ТУДА".';
+                        addChoice('пойти в спортзал', 'gym_ch2');
+                        addChoice('вернуться в подвал', 'explore_basement_ch2');
+                    }
+                    else if (scene === 'light_ch2') {
+                        text = 'Ты идёшь на свет. Это старая лампа на столе. Рядом записка: "Не ищи меня. Я сама тебя найду."';
+                        addChoice('взять записку', 'note_ch2');
+                    }
+                    else if (scene === 'note_ch2') {
+                        text = 'Почерк знакомый. Это та же девочка с фотографии.';
+                        
+                        if (metGirl) {
+                            text += ' Она была здесь недавно.';
+                        }
+                        
+                        addChoice('осмотреть стол', 'desk_ch2');
+                        addChoice('идти дальше', 'explore_basement_ch2');
+                    }
+                    else if (scene === 'desk_ch2') {
+                        text = 'В столе ящик. В нём старый дневник.';
+                        foundDiary = true;
+                        addChoice('открыть дневник', 'diary_ch2_text');
+                    }
+                    else if (scene === 'diary_ch2_text') {
+                        text = '"Они следят за мной. Я спряталась в подвале, но слышу шаги каждую ночь. Если ты это читаешь — уходи. Спасайся."';
+                        addChoice('взять дневник с собой', 'take_diary_ch2');
+                        addChoice('оставить и идти дальше', 'explore_basement_ch2');
+                    }
+                    else if (scene === 'take_diary_ch2') {
+                        text = 'Ты прячешь дневник в карман.';
+                        addChoice('осмотреть подвал дальше', 'explore_basement_ch2');
+                    }
+                    else if (scene === 'explore_basement_ch2') {
+                        text = 'В подвале много старых вещей. Шкафы, ящики, трубы. В углу — лестница наверх.';
+                        
+                        if (!foundDiary) {
+                            addChoice('обыскать ящики', 'search_boxes_ch2');
+                        }
+                        addChoice('подняться наверх', 'exit_basement_ch2');
+                        addChoice('ещё раз осмотреть комнату со светом', 'light_ch2');
+                    }
+                    else if (scene === 'search_boxes_ch2') {
+                        text = 'В ящиках старая одежда, книги, фотографии. Ты находишь школьный дневник.';
+                        
+                        if (!metGirl) {
+                            text += ' На фото — та самая девочка из парка.';
+                            metGirl = true;
+                        }
+                        
+                        foundDiary = true;
+                        addChoice('взять дневник', 'diary_ch2_text');
+                    }
+                    else if (scene === 'exit_basement_ch2') {
+                        text = 'Ты выходишь из подвала. Снова школьный коридор. Всё так же темно и холодно.';
+                        addChoice('пойти в спортзал', 'gym_ch2');
+                        addChoice('пойти на второй этаж', 'second_floor_ch2');
+                        addChoice('вернуться в подвал', 'basement_ending_ch2');
+                    }
+                    else if (scene === 'second_floor_ch2') {
+                        text = 'На втором этаже тихо. Классы пусты. В конце коридора — дверь на крышу.';
+                        addChoice('открыть дверь', 'roof_ch2');
+                        addChoice('вернуться', 'exit_basement_ch2');
+                    }
+                    else if (scene === 'roof_ch2') {
+                        text = 'Холодный ветер. Город внизу мёртв. На краю крыши стоит девушка.';
+                        
+                        if (metGirl) {
+                            text += ' Та самая с фотографии.';
+                        } else {
+                            text += ' Ты не узнаёшь её, но что-то знакомое есть.';
+                            metGirl = true;
+                        }
+                        
+                        addTrustChoice('подойти', 'girl_roof_ch2', +10);
+                        addTrustChoice('не подходить, наблюдать', 'observe_girl_ch2', 0);
+                    }
+                    else if (scene === 'observe_girl_ch2') {
+                        text = 'Она стоит неподвижно, смотрит вдаль.';
+                        addChoice('подойти', 'girl_roof_ch2');
+                        addChoice('вернуться в коридор', 'second_floor_ch2');
+                    }
+                    else if (scene === 'girl_roof_ch2') {
+                        text = 'Она оборачивается. "Ты пришёл. Я ждала тебя."';
+                        
+                        if (park) {
+                            text += ' "Помнишь парк? Я знала, что ты вернёшься."';
+                        }
+                        
+                        addTrustChoice('обнять её', 'hug_girl_ch2', +15);
+                        addTrustChoice('спросить, что случилось', 'ask_girl_ch2', 0);
+                    }
+                    else if (scene === 'hug_girl_ch2') {
+                        text = 'Она напрягается, но потом расслабляется. "Ты единственный, кто остался."';
+                        trust += 10;
+                        addChoice('спросить, что дальше', 'ask_girl_ch2');
+                    }
+                    else if (scene === 'ask_girl_ch2') {
+                        text = '"В городе что-то случилось. Все ушли или... умерли. Я не знаю. Но мы должны уйти."';
+                        addChoice('предложить уйти вместе', 'leave_with_girl_ch2');
+                        addChoice('спросить про школу', 'ask_school_ch2');
+                    }
+                    else if (scene === 'ask_school_ch2') {
+                        text = '"Школа — это ловушка. Здесь нельзя оставаться. Надо уходить как можно дальше."';
+                        addChoice('уйти с ней', 'leave_with_girl_ch2');
+                    }
+                    else if (scene === 'leave_with_girl_ch2') {
+                        text = 'Вы спускаетесь с крыши. Вместе идти легче. Она берёт тебя за руку.';
+                        
+                        if (injured) {
+                            text += ' Она замечает твою хромоту: "Тебе больно? Дай помогу."';
+                        }
+                        
+                        addChoice('выйти из школы', 'outside_with_girl_ch2');
+                    }
+                    else if (scene === 'outside_with_girl_ch2') {
+                        text = 'Вы на улице. Мороз. Вдалеке виднеется лес. "Нам туда."';
+                        addChoice('идти в лес', 'forest_with_girl_ch2');
+                    }
+                    else if (scene === 'forest_with_girl_ch2') {
+                        if (trust >= 50) {
+                            ending = 'girl_ending_ch2';
+                        } else {
+                            ending = 'alone_ending_ch2';
+                        }
+                        render();
+                        return;
+                    }
+                    else if (scene === 'gym_ch2') {
+                        text = 'В спортзале пусто. На полу чьи-то вещи — рюкзак, куртка. Кто-то был здесь недавно.';
+                        addChoice('осмотреть вещи', 'examine_things_ch2');
+                        addChoice('крикнуть', 'shout_gym_ch2');
+                        addChoice('вернуться в коридор', 'exit_basement_ch2');
+                    }
+                    else if (scene === 'shout_gym_ch2') {
+                        text = '— Есть кто? Тишина. Но потом сверху падает мяч. Кто-то на балконе.';
+                        addChoice('подняться на балкон', 'balcony_ch2');
+                    }
+                    else if (scene === 'examine_things_ch2') {
+                        text = 'В рюкзаке консервы, вода, карта. Кто-то готовился к долгому пути.';
+                        addChoice('взять еду с собой', 'take_food_ch2');
+                        addChoice('оставить и пойти на балкон', 'balcony_ch2');
+                    }
+                    else if (scene === 'take_food_ch2') {
+                        text = 'Ты берёшь консервы и воду. Пригодится.';
+                        helped = true;
+                        addChoice('подняться на балкон', 'balcony_ch2');
+                    }
+                    else if (scene === 'balcony_ch2') {
+                        text = 'На балконе никого. Только следы на пыли. Ведёт к двери на крышу.';
+                        addChoice('открыть дверь', 'roof_ch2');
+                    }
+                    else if (scene === 'north_ending_ch2') {
+                        ending = 'trust_ending_ch2';
+                        render();
+                        return;
+                    }
+                    else if (scene === 'basement_ending_ch2') {
+                        ending = 'basement_ending_ch2';
+                        render();
+                        return;
+                    }
                 }
 
                 sceneEl.innerText = text;
@@ -371,11 +699,8 @@
                 updateCode();
             }
 
-            // Навигация
             arrowLeft.onclick = () => {
-                if (historyIndex > 0) {
-                    showHistoryItem(historyIndex - 1);
-                }
+                if (historyIndex > 0) showHistoryItem(historyIndex - 1);
             };
 
             arrowRight.onclick = () => {
@@ -384,13 +709,17 @@
                 }
             };
 
-            // Сброс
             function reset() {
+                chapter = 1;
                 scene = 'start';
                 metGirl = false;
                 foundKey = false;
                 injured = false;
                 park = false;
+                metStranger = false;
+                trust = 50;
+                foundDiary = false;
+                helped = false;
                 ending = null;
                 history = [];
                 historyIndex = -1;
