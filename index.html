@@ -2,389 +2,429 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Неля · Подворотня · 17+</title>
+    <title>Осколки надії / Осколки надежды</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #0a0a0f;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Courier New', monospace;
             min-height: 100vh;
-            font-family: 'Courier New', 'Segoe UI', monospace;
-            padding: 16px;
-        }
-        .game-container {
-            max-width: 700px;
-            width: 100%;
-            background: #111115;
-            border-radius: 32px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px #2a2a35 inset;
-            overflow: hidden;
-        }
-        .screen {
-            padding: 24px 20px 20px;
-            background: #0c0c12;
-        }
-        .face {
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
-        }
-        .avatar {
-            background: #1e1e2a;
-            width: 80px;
-            height: 80px;
-            border-radius: 80px;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            border: 1px solid #4a4a60;
+            padding: 20px;
         }
-        .status {
-            background: #00000066;
-            border-radius: 24px;
-            padding: 8px 14px;
-            margin-bottom: 20px;
+        .game {
+            max-width: 1000px;
+            width: 100%;
+            background: #07070c;
+            border: 2px solid #2a2a35;
+            border-radius: 28px;
+            padding: 25px;
+        }
+        .game-header {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            color: #bcbcbc;
-            backdrop-filter: blur(2px);
+            align-items: baseline;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .text-box {
-            background: #0b0b12;
-            padding: 20px;
-            border-radius: 24px;
-            margin-bottom: 28px;
-            border-left: 4px solid #b91c1c;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-        .narrative {
+        .title { color: #8a7aaa; font-size: 14px; letter-spacing: 2px; }
+        .stats { color: #6a6a8a; font-size: 12px; }
+        .scene {
+            background: #0c0c12;
+            border: 2px solid #2c2c3a;
+            border-radius: 20px;
+            padding: 28px;
+            min-height: 280px;
+            color: #e0e0ec;
             font-size: 18px;
-            line-height: 1.45;
-            color: #ececec;
-            font-weight: 500;
-            text-shadow: 0 1px 0 #00000040;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            max-height: 380px;
         }
-        .options {
+        .inventory-panel {
+            background: #0a0a12;
+            border: 2px solid #2a2a35;
+            border-radius: 40px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 15px;
+            align-items: center;
+        }
+        .inventory-title { color: #9a8aba; font-weight: bold; font-size: 14px; }
+        .inventory-items { display: flex; flex-wrap: wrap; gap: 6px 10px; }
+        .inventory-item {
+            background: #1a1a26;
+            border: 1px solid #4a4a66;
+            border-radius: 20px;
+            padding: 4px 12px;
+            color: #c0c0e0;
+            font-size: 13px;
+        }
+        .no-items { color: #6a6a8a; font-style: italic; font-size: 13px; }
+        .choices {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 25px;
+            max-height: 400px;
+            overflow-y: auto;
         }
-        .option-btn {
-            background: #1a1a24;
-            border: none;
-            padding: 14px 18px;
-            border-radius: 60px;
-            font-family: inherit;
-            font-size: 16px;
-            font-weight: bold;
+        .choice {
+            background: #111117;
+            border: 2px solid #33333f;
+            color: #d0d0da;
+            padding: 12px 18px;
+            font-size: 15px;
+            border-radius: 16px;
             text-align: left;
-            color: #f0f0f0;
             cursor: pointer;
-            transition: all 0.15s;
-            border: 1px solid #333344;
-            letter-spacing: 0.3px;
+            transition: 0.1s;
+            font-family: inherit;
         }
-        .option-btn:hover {
-            background: #2f2f3f;
-            border-color: #aa3e3e;
-            transform: translateX(4px);
+        .choice:hover:not(.choice-disabled) {
+            background: #1e1e2a;
+            border-color: #7a7a9a;
+            transform: translateX(3px);
+        }
+        .choice-disabled {
+            background: #0a0a12;
+            border-color: #2a2a35;
+            color: #6a6a8a;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .bottom-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #0c0c12;
+            border: 2px solid #2a2a35;
+            border-radius: 20px;
+            padding: 12px 20px;
+            flex-wrap: wrap;
+        }
+        .arrow {
+            background: #111117;
+            border: 2px solid #33333f;
+            color: #d0d0da;
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .arrow.disabled { opacity: 0.3; cursor: not-allowed; }
+        .save-code {
+            background: #0f0f17;
+            border: 2px solid #333340;
+            border-radius: 40px;
+            padding: 8px 16px;
+            flex: 1;
+            color: #b0b0d0;
+            font-family: monospace;
+            font-size: 12px;
         }
         .reset-btn {
-            background: #2c1a1a;
-            border: 1px solid #884444;
-            color: #ffb7b7;
-            text-align: center;
+            background: #1a1a26;
+            border: 2px solid #4a4a66;
+            color: #d0d0e0;
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .reset-btn:hover { background: #2a2a36; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a12; }
+        ::-webkit-scrollbar-thumb { background: #4a4a66; border-radius: 10px; }
+
+        /* Модальное окно выбора языка */
+        .lang-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
             justify-content: center;
-            margin-top: 8px;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(6px);
         }
-        .reset-btn:hover {
-            background: #4a2a2a;
-            transform: none;
-        }
-        footer {
-            font-size: 10px;
+        .lang-card {
+            background: #0c0c14;
+            border: 3px solid #5a4a7a;
+            border-radius: 48px;
+            padding: 40px 50px;
             text-align: center;
-            color: #444455;
-            padding: 16px;
-            background: #08080c;
-            border-top: 1px solid #20202a;
+            box-shadow: 0 0 30px rgba(100,70,150,0.3);
         }
-        .badge {
-            color: #b77c3c;
+        .lang-title {
+            color: #d0c0f0;
+            font-size: 28px;
+            margin-bottom: 35px;
+            font-family: monospace;
         }
-        hr {
-            border-color: #2a2a35;
-            margin: 8px 0;
+        .lang-buttons {
+            display: flex;
+            gap: 35px;
+            justify-content: center;
+        }
+        .lang-btn {
+            background: #1a1a28;
+            border: 2px solid #7a6a9a;
+            color: #e0e0f0;
+            font-size: 28px;
+            padding: 15px 35px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.1s;
+        }
+        .lang-btn:hover {
+            background: #2a2a3a;
+            transform: scale(1.02);
+            border-color: #b0a0d0;
         }
     </style>
 </head>
 <body>
-<div class="game-container" id="gameRoot">
-    <div class="screen">
-        <div class="face">
-            <div class="avatar">🎒</div>
-        </div>
-        <div class="status">
-            <span>⚡ НЕЛЯ · 17</span>
-            <span class="badge">ПОДВОРОТНЯ</span>
-            <span>🕯️ 00:17</span>
-        </div>
-        <div class="text-box">
-            <div class="narrative" id="storyText">
-                — Эй, художница сонная, тормозни.<br><br>
-                Фонарь мигнул в последний раз. Пахло мокрой шерстью и железом. Двое отделились от стены.
-            </div>
-        </div>
-        <div class="options" id="optionsContainer">
-            <!-- кнопки будут здесь -->
-        </div>
-        <hr>
-        <button class="option-btn reset-btn" id="resetGame">⟳ начать заново</button>
+<div class="game" id="gameContainer" style="display: none;">
+    <div class="game-header">
+        <div class="title" id="gameTitle">❄️ ОСКОЛКИ НАДЕЖДЫ ❄️</div>
+        <div class="stats" id="statsArea">реплик: 0 | предметов: 0</div>
     </div>
-    <footer>
-        ⚠️ 17+ · жестокие сцены, ненормативная лексика, психологическое напряжение · выбор меняет всё
-    </footer>
+    <div id="sceneText" class="scene">Загрузка...</div>
+    <div class="inventory-panel">
+        <span class="inventory-title" id="invTitle">📦 ИНВЕНТАРЬ</span>
+        <div id="inventoryList" class="inventory-items"><span class="no-items">пусто</span></div>
+    </div>
+    <div id="choicesContainer" class="choices"></div>
+    <div class="bottom-panel">
+        <div style="display:flex; gap:8px"><div id="arrowLeft" class="arrow">←</div><div id="arrowRight" class="arrow">→</div></div>
+        <input id="saveCode" class="save-code" readonly value="---">
+        <button class="reset-btn" id="resetBtn">🔄 СБРОС</button>
+    </div>
+</div>
+
+<div id="langModal" class="lang-modal">
+    <div class="lang-card">
+        <div class="lang-title">🌍 ОБЕРИ МОВУ / ВЫБЕРИ ЯЗЫК</div>
+        <div class="lang-buttons">
+            <div class="lang-btn" data-lang="ua">🇺�А УКРАЇНСЬКА</div>
+            <div class="lang-btn" data-lang="ru">🇷🇺 РУССКИЙ</div>
+        </div>
+    </div>
 </div>
 
 <script>
-    // состояния игры
-    let gameState = {
-        step: 'intro',       // текущая сцена
-        fear: 0,             // 0-3, влияние на развязку
-        money: true,         // деньги в кармане куртки
-        ending: null
+    // ----- БАГАТОМОВНІСТЬ (UA + RU) -----
+    let lang = null; // 'ru' або 'ua'
+    
+    // Тексти для локалізації (ключі)
+    const texts = {
+        // Загальні
+        invTitle: { ru: "📦 ИНВЕНТАРЬ", ua: "📦 ІНВЕНТАР" },
+        emptyInv: { ru: "пусто", ua: "порожньо" },
+        statsReplic: { ru: "реплик:", ua: "реплік:" },
+        statsItems: { ru: "предметов:", ua: "предметів:" },
+        resetBtn: { ru: "🔄 СБРОС", ua: "🔄 СКИДАННЯ" },
+        titleGame: { ru: "❄️ ОСКОЛКИ НАДЕЖДЫ ❄️", ua: "❄️ УЛАМКИ НАДІЇ ❄️" },
+        continueBtn: { ru: "→ продолжить", ua: "→ продовжити" },
+        nextBtn: { ru: "→ дальше", ua: "→ далі" },
+        restartChoice: { ru: "→ начать заново", ua: "→ почати заново" },
+        
+        // Діалоги та сцени (всі репліки)
+        // Подъезд
+        startScene: { ru: "📍 ПОДЪЕЗД\n\nТы приходишь в себя на холодном бетонном полу. Голова гудит. Рядом лежит девушка — её лицо бледное. В руке зажата фотография и записка: «Школа №7. Там правда». Нужно выбираться.", ua: "📍 ПІД'ЇЗД\n\nТи приходиш до тями на холодній бетонній підлозі. Голова гуде. Поруч лежить дівчина — її обличчя бліде. У руці затиснуте фото й записка: «Школа №7. Там правда». Треба вибиратися." },
+        choiceGirl: { ru: "осмотреть девушку", ua: "оглянути дівчину" },
+        choiceExit: { ru: "выйти на улицу", ua: "вийти на вулицю" },
+        choiceSearchPorch: { ru: "обыскать подъезд", ua: "обшукати під'їзд" },
+        girlCheck: { ru: "Кожа холодная. Она не дышит. На шее странная отметина. На обороте фото: «Помни. Ты был здесь». Мурашки по спине.", ua: "Шкіра холодна. Вона не дихає. На шиї дивна відмітина. На звороті фото: «Пам'ятай. Ти був тут». Мурашки по спині." },
+        searchPorchRes: { ru: "В почтовом ящике находишь нож и спички. Под ним газета: «Эпидемия. Город на карантине». Дата — три недели назад.", ua: "У поштовій скриньці знаходиш ніж та сірники. Під ним газета: «Епідемія. Місто на карантині». Дата — три тижні тому." },
+        // Вулиця
+        streetStart: { ru: "📍 УЛИЦА\n\nСерый туман над разбитым асфальтом. Перевёрнутые машины. Вдалеке школа №7. Справа тёмный парк. Холод пробирает до костей.", ua: "📍 ВУЛИЦЯ\n\nСірий туман над розбитим асфальтом. Перевернуті машини. Вдалині школа №7. Праворуч темний парк. Холод пробирає до кісток." },
+        choiceSchool: { ru: "идти к школе", ua: "йти до школи" },
+        choicePark: { ru: "зайти в парк", ua: "зайти в парк" },
+        choiceMap: { ru: "посмотреть карту", ua: "подивитись карту" },
+        mapCheck: { ru: "На карте: школа, парк, лес, лагерь выживших, военный бункер. Красным обведена школа: «Начало всего».", ua: "На карті: школа, парк, ліс, табір вцілілих, військовий бункер. Червоним обведена школа: «Початок всього»." },
+        // Парк
+        parkEntrance: { ru: "📍 ПАРК\n\nСтарые деревья. На скамейке девочка в школьной форме. Рядом рюкзак.", ua: "📍 ПАРК\n\nСтарі дерева. На лавці дівчинка у шкільній формі. Поруч рюкзак." },
+        choiceApproach: { ru: "подойти к девочке", ua: "підійти до дівчинки" },
+        choiceBackpack: { ru: "осмотреть рюкзак", ua: "оглянути рюкзак" },
+        girlParkTalk: { ru: "Девочка: «Иди в школу. Там ответы». Она даёт отмычку и исчезает.", ua: "Дівчинка: «Іди до школи. Там відповіді». Вона дає відмичку і зникає." },
+        parkBackpackRes: { ru: "В рюкзаке: еда, вода, карта. Дневник: «Они пришли ночью».", ua: "У рюкзаку: їжа, вода, карта. Щоденник: «Вони прийшли вночі»." },
+        // Школа
+        schoolHall: { ru: "📍 ШКОЛА\n\nДвери распахнуты. Пахнет плесенью. Стены в граффити: «ОНИ ЗНАЮТ», «НЕ ХОДИ В ПОДВАЛ».", ua: "📍 ШКОЛА\n\nДвері розчинені. Пахне пліснявою. Стіни в графіті: «ВОНИ ЗНАЮТЬ», «НЕ ХОДИ В ПІДВАЛ»." },
+        choiceClass: { ru: "пойти в класс", ua: "піти в клас" },
+        choiceBasement: { ru: "спуститься в подвал", ua: "спуститися в підвал" },
+        schoolClass: { ru: "Класс разгромлен. На доске: «КЛЮЧ В КНИГЕ».", ua: "Клас розгромлений. На дошці: «КЛЮЧ У КНИЗІ»." },
+        searchBooks: { ru: "искать в книгах", ua: "шукати в книгах" },
+        searchCloset: { ru: "осмотреть шкаф", ua: "оглянути шафу" },
+        booksRes: { ru: "В книге находишь отмычки и фото класса. На обороте: «Я знаю, ты вернёшься».", ua: "У книзі знаходиш відмички та фото класу. На звороті: «Я знаю, ти повернешся»." },
+        closetRes: { ru: "В шкафу фонарик. Дневник: «Они из лаборатории».", ua: "У шафі ліхтарик. Щоденник: «Вони з лабораторії»." },
+        basementDoor: { ru: "Дверь в подвал заперта. Надпись: «ОНИ ТАМ». Слышна капель.", ua: "Двері в підвал замкнені. Напис: «ВОНИ ТАМ». Чути капіж." },
+        choicePick: { ru: "вскрыть отмычкой", ua: "відкрити відмичкою" },
+        basementInside: { ru: "В углу сидит человек в плаще. «Я Сергей, учитель. Вирус из лаборатории. Выжившие ушли в лес».", ua: "У кутку сидить чоловік у плащі. «Я Сергій, учитель. Вірус з лабораторії. Вцілілі пішли в ліс»." },
+        choiceTrust: { ru: "довериться", ua: "довіритись" },
+        choiceAsk: { ru: "спросить подробности", ua: "запитати подробиці" },
+        trustRes: { ru: "Сергей: «Пойдём в лагерь». Он даёт аптечку и бинты. Нога заживает.", ua: "Сергій: «Ходімо в табір». Він дає аптечку та бинти. Нога загоюється." },
+        askRes: { ru: "«Эпидемия три недели назад. Люди меняются. Бункер на востоке». Он даёт рацию.", ua: "«Епідемія три тижні тому. Люди змінюються. Бункер на сході». Він дає рацію." },
+        // Лагерь
+        campArrival: { ru: "📍 ЛАГЕРЬ\n\nПалатки, костёр. Старейшина: «Новичок? Проходи». Рядом охотник Дмитрий и врач Анна.", ua: "📍 ТАБІР\n\nНамети, багаття. Старійшина: «Новачок? Проходь». Поряд мисливець Дмитро та лікарка Анна." },
+        choiceElder: { ru: "поговорить со старейшиной", ua: "поговорити зі старійшиною" },
+        choiceAskFood: { ru: "попросить еды", ua: "попросити їжі" },
+        choiceExplore: { ru: "осмотреть лагерь", ua: "оглянути табір" },
+        elderTalk: { ru: "«На востоке военный бункер. Там припасы. Поможешь найти — примешь нас в семью». Он даёт карту.", ua: "«На сході військовий бункер. Там запаси. Допоможеш знайти — приймеш нас у сім'ю». Він дає карту." },
+        askFoodRes: { ru: "Тебе дают еду и воду. «Держи, мы все братья».", ua: "Тобі дають їжу та воду. «Тримай, ми всі брати»." },
+        exploreCamp: { ru: "Старая рация. Нужны батарейки.", ua: "Стара рація. Потрібні батарейки." },
+        fixRadio: { ru: "починить рацию", ua: "полагодити рацію" },
+        fixRadioRes: { ru: "Рация ожила. Слышен голос: «...помощь... бункер 7... координаты...». Люди плачут от радости.", ua: "Рація ожила. Чути голос: «...допомога... бункер 7... координати...». Люди плачуть від радості." },
+        campStayEnd: { ru: "🏆 КОНЦОВКА: Ты остаёшься в лагере. Живёшь в мире, помогаешь другим. Но чувствуешь — правда осталась где-то в школе. Однажды ночью ты смотришь на звёзды и понимаешь — твой путь ещё не закончен. 🏆", ua: "🏆 КІНЦІВКА: Ти залишаєшся в таборі. Живеш у мирі, допомагаєш іншим. Але відчуваєш — правда залишилась десь у школі. Однієї ночі ти дивишся на зорі й розумієш — твій шлях ще не закінчений. 🏆" },
+        // Ліс і фінал
+        forestPath: { ru: "📍 ЛЕС\n\nВысокие сосны, снег. Дмитрий идёт впереди. «Бункер должен быть где-то здесь». Тропа раздваивается.", ua: "📍 ЛІС\n\nВисокі сосни, сніг. Дмитро йде попереду. «Бункер має бути десь тут». Стежка роздвоюється." },
+        choiceHut: { ru: "пойти к избушке", ua: "піти до хатинки" },
+        choiceDeep: { ru: "идти дальше по тропе", ua: "йти далі стежкою" },
+        hutKnock: { ru: "постучать", ua: "постукати" },
+        hutAround: { ru: "обойти вокруг", ua: "обійти навколо" },
+        hutKnockRes: { ru: "Старушка: «Заходите, погрейтесь». Она даёт еду и спички. «Бункер? Идите дальше по тропе, за оврагом».", ua: "Бабуся: «Заходьте, погрійтесь». Вона дає їжу та сірники. «Бункер? Ідіть далі стежкою, за яром»." },
+        hutAroundRes: { ru: "За избушкой находишь старый топор.", ua: "За хатинкою знаходиш стару сокиру." },
+        forestDeep: { ru: "Глубже в лесу. Слышны звуки. Впереди железная дверь, вросшая в землю. Военный бункер!", ua: "Глибше в лісі. Чути звуки. Попереду залізні двері, що вросли в землю. Військовий бункер!" },
+        bunkerDoor: { ru: "Тяжёлая железная дверь. Кодовая панель. Нужен код доступа.", ua: "Важкі залізні двері. Кодова панель. Потрібен код доступу." },
+        bunkerOpenRes: { ru: "Дверь открывается. Внутри — склад: ящики с едой, водой, медикаментами, оружием. Анна плачет. Старейшина жмёт руку: «Ты спас нас всех!»", ua: "Двері відчиняються. Всередині — склад: ящики з їжею, водою, медикаментами, зброєю. Анна плаче. Старійшина тисне руку: «Ти врятував нас усіх!»" },
+        bunkerInside: { ru: "Внутри бункера тепло и безопасно. На стенах карты, радиостанция. Выжившие обустраиваются. Ты смотришь на фотографию девочки из подъезда — она улыбается. Кажется, она знала, что всё закончится хорошо.", ua: "Всередині бункера тепло та безпечно. На стінах карти, радіостанція. Вцілілі облаштовуються. Ти дивишся на фотографію дівчинки з під'їзду — вона посміхається. Здається, вона знала, що все закінчиться добре." },
+        goodEnding: { ru: "✨✨✨ ХОРОШАЯ КОНЦОВКА ✨✨✨\n\nВы нашли бункер и спасли лагерь. Теперь у вас есть убежище, припасы и будущее. Вы вместе — а значит, выживете. Город остался позади, но впереди новая жизнь. Фотография девочки всегда с тобой — напоминание о том, что надежда умирает последней. ✨✨✨", ua: "✨✨✨ ХОРОША КІНЦІВКА ✨✨✨\n\nВи знайшли бункер і врятували табір. Тепер у вас є укриття, запаси та майбутнє. Ви разом — а значить, виживете. Місто залишилося позаду, а попереду нове життя. Фотографія дівчинки завжди з тобою — нагадування про те, що надія вмирає останньою. ✨✨✨" },
+        defaultNext: { ru: "Ты продолжаешь путь по пустошам...", ua: "Ти продовжуєш шлях пусткою..." },
     };
-
-    // DOM элементы
-    const storyEl = document.getElementById('storyText');
-    const optionsEl = document.getElementById('optionsContainer');
-
-    // Вспомогательная отрисовка
-    function render() {
-        if (gameState.ending) {
-            showEnding();
-            return;
-        }
-        const scene = scenes[gameState.step];
-        if (!scene) {
-            // fallback
-            storyEl.innerHTML = "Ошибка тишины. Перезагрузи историю.";
-            optionsEl.innerHTML = '';
-            return;
-        }
-        storyEl.innerHTML = scene.text;
-        // генерируем кнопки
-        optionsEl.innerHTML = '';
-        scene.options.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerHTML = opt.label;
-            btn.onclick = () => {
-                // выполнить действие
-                if (opt.action) opt.action(gameState);
-                // переход
-                if (opt.nextStep) {
-                    gameState.step = opt.nextStep;
-                } else {
-                    // если нет следующего шага — это концовка
-                    if (opt.ending) {
-                        gameState.ending = opt.ending;
-                    } else {
-                        console.warn("нет перехода");
-                    }
-                }
-                render();
-            };
-            optionsEl.appendChild(btn);
+    
+    function t(key) { return texts[key]?.[lang] || texts[key]?.ru || key; }
+    
+    // Інвентар
+    let inventory = {
+        'еда':0,'вода':0,'бинты':0,'аптечка':0,'батарейки':0,'спички':0,
+        'верёвка':0,'отмычка':0,'нож':0,'фонарик':0,'рация':0,'карта':0
+    };
+    const itemNames = {
+        'еда':{ru:'🍞 Еда',ua:'🍞 Їжа'},'вода':{ru:'💧 Вода',ua:'💧 Вода'},'бинты':{ru:'🩹 Бинты',ua:'🩹 Бинти'},
+        'аптечка':{ru:'💊 Аптечка',ua:'💊 Аптечка'},'батарейки':{ru:'🔋 Батарейки',ua:'🔋 Батарейки'},
+        'спички':{ru:'🔥 Спички',ua:'🔥 Сірники'},'верёвка':{ru:'🪢 Верёвка',ua:'🪢 Мотузка'},
+        'отмычка':{ru:'🔓 Отмычка',ua:'🔓 Відмичка'},'нож':{ru:'🔪 Нож',ua:'🔪 Ніж'},'фонарик':{ru:'🔦 Фонарик',ua:'🔦 Ліхтарик'},
+        'рация':{ru:'📻 Рация',ua:'📻 Рація'},'карта':{ru:'🗺️ Карта',ua:'🗺️ Карта'}
+    };
+    function addItem(id,q=1){ if(inventory[id]!==undefined){ inventory[id]+=q; updateInvDisplay(); } }
+    function removeItem(id,q=1){ if(inventory[id]>=q){ inventory[id]-=q; updateInvDisplay(); return true; } return false; }
+    function hasItem(id,q=1){ return inventory[id]>=q; }
+    
+    function updateInvDisplay(){
+        let items=[];
+        for(let [id,qty] of Object.entries(inventory)) if(qty>0) items.push(`<span class="inventory-item">${itemNames[id][lang]} x${qty}</span>`);
+        document.getElementById('inventoryList').innerHTML = items.length ? items.join('') : `<span class="no-items">${t('emptyInv')}</span>`;
+        let total=Object.values(inventory).reduce((a,b)=>a+b,0);
+        document.getElementById('statsArea').innerHTML = `${t('statsReplic')} ${replicaCount} | ${t('statsItems')} ${total}`;
+        document.getElementById('invTitle').innerText = t('invTitle');
+        document.getElementById('resetBtn').innerText = t('resetBtn');
+        document.getElementById('gameTitle').innerText = t('titleGame');
+    }
+    
+    let currentLocation="Подъезд", sceneId="start", ending=null, replicaCount=0;
+    let metGirl=false,injured=false,park=false,metStranger=false,metSurvivors=false,helpedOldWoman=false,radioFixed=false,hasKeyCard=false,bunkerFound=false;
+    let history=[],historyIndex=-1,isViewingHistory=false;
+    const sceneEl=document.getElementById('sceneText'), choicesEl=document.getElementById('choicesContainer');
+    
+    function addReplica(){ replicaCount++; updateInvDisplay(); }
+    function addToHistory(text){ history.push(text); historyIndex=history.length-1; isViewingHistory=false; }
+    function updateArrows(){ arrowLeft.classList.toggle('disabled',historyIndex<=0); arrowRight.classList.toggle('disabled',historyIndex>=history.length-1||!isViewingHistory); }
+    
+    function addChoice(text, nextScene, nextLoc=null, needItem=null, needQty=1, useItem=null){
+        let btn=document.createElement('button'); btn.className='choice';
+        let canDo=!needItem||hasItem(needItem,needQty);
+        if(!canDo){ btn.classList.add('choice-disabled'); btn.disabled=true; btn.innerText=`${text} ❌ (потрібно: ${itemNames[needItem]?.[lang]||needItem})`; }
+        else{ btn.innerText=text; btn.onclick=()=>{ if(useItem&&needItem) removeItem(useItem,needQty); if(nextLoc) currentLocation=nextLoc; sceneId=nextScene; ending=null; render(); }; }
+        choicesEl.appendChild(btn);
+    }
+    function addNext(nextScene,nextLoc=null){
+        let btn=document.createElement('button'); btn.className='choice'; btn.innerText=t('nextBtn');
+        btn.onclick=()=>{ if(nextLoc) currentLocation=nextLoc; sceneId=nextScene; render(); };
+        choicesEl.appendChild(btn);
+    }
+    
+    function render(){
+        if(isViewingHistory) return;
+        choicesEl.innerHTML='';
+        if(ending){ sceneEl.innerText=ending; addChoice(t('restartChoice'),'start','Подъезд'); addToHistory(ending); return; }
+        let text=""; addReplica();
+        // Велика логіка сцен (майже як у вихідній, але тексти через t())
+        if(currentLocation==="Подъезд" && sceneId==="start"){
+            text=t('startScene');
+            addChoice(t('choiceGirl'),"girl_check","Подъезд"); addChoice(t('choiceExit'),"street_start","Улица"); addChoice(t('choiceSearchPorch'),"search_porch","Подъезд");
+        } else if(currentLocation==="Подъезд" && sceneId==="girl_check"){ text=t('girlCheck'); metGirl=true; addChoice(t('choiceExit'),"street_start","Улица"); addChoice(t('choiceSearchPorch'),"search_porch","Подъезд");
+        } else if(currentLocation==="Подъезд" && sceneId==="search_porch"){ text=t('searchPorchRes'); addItem('нож',1); addItem('спички',3); addChoice(t('choiceExit'),"street_start","Улица");
+        } else if(currentLocation==="Улица" && sceneId==="street_start"){ text=t('streetStart'); addChoice(t('choiceSchool'),"school_hall","Школа"); addChoice(t('choicePark'),"park_entrance","Парк"); if(hasItem('карта')) addChoice(t('choiceMap'),"map_check","Улица");
+        } else if(currentLocation==="Улица" && sceneId==="map_check"){ text=t('mapCheck'); addChoice(t('choiceSchool'),"school_hall","Школа"); addChoice("→ Лагерь","camp_arrival","Лагерь выживших");
+        } else if(currentLocation==="Парк" && sceneId==="park_entrance"){ text=t('parkEntrance'); addChoice(t('choiceApproach'),"girl_park_talk","Парк"); addChoice(t('choiceBackpack'),"park_backpack","Парк"); addChoice(t('choiceExit'),"street_start","Улица");
+        } else if(currentLocation==="Парк" && sceneId==="girl_park_talk"){ text=t('girlParkTalk'); addItem('отмычка',1); addChoice(t('choiceBackpack'),"park_backpack","Парк"); addChoice(t('choiceExit'),"street_start","Улица");
+        } else if(currentLocation==="Парк" && sceneId==="park_backpack"){ text=t('parkBackpackRes'); addItem('еда',2); addItem('вода',2); addItem('карта',1); addChoice("← назад","park_entrance","Парк");
+        } else if(currentLocation==="Школа" && sceneId==="school_hall"){ text=t('schoolHall'); addChoice(t('choiceClass'),"school_class","Школа"); addChoice(t('choiceBasement'),"basement_door","Школа"); addChoice(t('choiceExit'),"street_start","Улица");
+        } else if(currentLocation==="Школа" && sceneId==="school_class"){ text=t('schoolClass'); addChoice(t('searchBooks'),"search_books","Школа"); addChoice(t('searchCloset'),"search_closet","Школа"); addChoice("← назад","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="search_books"){ text=t('booksRes'); addItem('отмычка',2); addChoice(t('searchCloset'),"search_closet","Школа"); addChoice("← назад","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="search_closet"){ text=t('closetRes'); addItem('фонарик',1); addChoice("← назад","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="basement_door"){ text=t('basementDoor'); if(hasItem('отмычка')) addChoice(t('choicePick'),"basement_inside","Школа",'отмычка',1,'отмычка'); else addChoice("відмичка","basement_inside","Школа",'отмычка'); addChoice("← назад","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="basement_inside"){ text=t('basementInside'); metStranger=true; addChoice(t('choiceTrust'),"basement_trust","Школа"); addChoice(t('choiceAsk'),"basement_ask","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="basement_trust"){ text=t('trustRes'); addItem('аптечка',1); addItem('бинты',2); addChoice("→ Лагерь","camp_arrival","Лагерь выживших"); addChoice("← залишитись","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="basement_ask"){ text=t('askRes'); addItem('рация',1); addChoice("→ Лагерь","camp_arrival","Лагерь выживших"); addChoice("← залишитись","school_hall","Школа");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="camp_arrival"){ text=t('campArrival'); metSurvivors=true; addChoice(t('choiceElder'),"elder_talk","Лагерь выживших"); addChoice(t('choiceAskFood'),"ask_food_camp","Лагерь выживших"); addChoice(t('choiceExplore'),"explore_camp","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="elder_talk"){ text=t('elderTalk'); addItem('карта',1); addChoice("→ в лес","forest_path","Лес"); addChoice("відмовитись","camp_stay","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="ask_food_camp"){ text=t('askFoodRes'); addItem('еда',2); addItem('вода',2); addChoice(t('choiceElder'),"elder_talk","Лагерь выживших"); addChoice(t('choiceExplore'),"explore_camp","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="explore_camp"){ text=t('exploreCamp'); if(hasItem('батарейки')) addChoice(t('fixRadio'),"fix_radio","Лагерь выживших",'батарейки',2,'батарейки'); addChoice("← назад","camp_arrival","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="fix_radio"){ text=t('fixRadioRes'); radioFixed=true; addChoice("← назад","camp_arrival","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="camp_stay"){ ending=t('campStayEnd'); render(); return;
+        } else if(currentLocation==="Лес" && sceneId==="forest_path"){ text=t('forestPath'); addChoice(t('choiceHut'),"forest_hut","Лес"); addChoice(t('choiceDeep'),"forest_deep","Лес"); addChoice("← назад","camp_arrival","Лагерь выживших");
+        } else if(currentLocation==="Лес" && sceneId==="forest_hut"){ text="Охотничья избушка. Из трубы идёт дым."; addChoice(t('hutKnock'),"hut_knock","Лес"); addChoice(t('hutAround'),"hut_around","Лес");
+        } else if(currentLocation==="Лес" && sceneId==="hut_knock"){ text=t('hutKnockRes'); addItem('еда',2);addItem('вода',2);addItem('спички',3); helpedOldWoman=true; addChoice(t('choiceDeep'),"forest_deep","Лес"); addChoice("← назад","forest_path","Лес");
+        } else if(currentLocation==="Лес" && sceneId==="hut_around"){ text=t('hutAroundRes'); addItem('нож',1); addChoice(t('hutKnock'),"hut_knock","Лес");
+        } else if(currentLocation==="Лес" && sceneId==="forest_deep"){ text=t('forestDeep'); addChoice("осмотреть дверь","bunker_door","Бункер"); addChoice("← назад","forest_path","Лес");
+        } else if(currentLocation==="Бункер" && sceneId==="bunker_door"){ text=t('bunkerDoor'); if(hasItem('карта')) addChoice("використати карту","bunker_open","Бункер",'карта',1,'карта'); else addChoice("зламати","bunker_open","Бункер",'отмычка'); addChoice("← назад","forest_path","Лес");
+        } else if(currentLocation==="Бункер" && sceneId==="bunker_open"){ text=t('bunkerOpenRes'); addItem('еда',20);addItem('вода',20);addItem('аптечка',5);addItem('бинты',10); bunkerFound=true; addChoice("увійти","bunker_inside","Бункер");
+        } else if(currentLocation==="Бункер" && sceneId==="bunker_inside"){ text=t('bunkerInside'); addChoice("залишитись","final_good","Бункер");
+        } else if(currentLocation==="Бункер" && sceneId==="final_good"){ ending=t('goodEnding'); render(); return;
+        } else { addNext("street_start","Улица"); text=t('defaultNext'); }
+        let locationTag = `<span style="background:#1e1e2a; padding:3px 12px; border-radius:20px; font-size:12px;">📍 ${currentLocation}</span><br><br>`;
+        sceneEl.innerHTML = locationTag + text.replace(/\n/g,'<br>');
+        addToHistory(text); updateArrows(); updateInvDisplay();
+    }
+    
+    const arrowLeft=document.getElementById('arrowLeft'), arrowRight=document.getElementById('arrowRight');
+    arrowLeft.onclick=()=>{ if(historyIndex>0) { historyIndex--; sceneEl.innerText=history[historyIndex]; choicesEl.innerHTML=''; let btn=document.createElement('button'); btn.className='choice'; btn.innerText=t('continueBtn'); btn.onclick=()=>{ isViewingHistory=false; render(); }; choicesEl.appendChild(btn); isViewingHistory=true; updateArrows(); } };
+    arrowRight.onclick=()=>{ if(isViewingHistory && historyIndex<history.length-1){ historyIndex++; sceneEl.innerText=history[historyIndex]; choicesEl.innerHTML=''; let btn=document.createElement('button'); btn.className='choice'; btn.innerText=t('continueBtn'); btn.onclick=()=>{ isViewingHistory=false; render(); }; choicesEl.appendChild(btn); isViewingHistory=true; updateArrows(); } };
+    
+    function resetGame(){
+        inventory={'еда':0,'вода':0,'бинты':0,'аптечка':0,'батарейки':0,'спички':0,'верёвка':0,'отмычка':0,'нож':0,'фонарик':0,'рация':0,'карта':0};
+        currentLocation="Подъезд"; sceneId="start"; ending=null; replicaCount=0;
+        metGirl=false; injured=false; park=false; metStranger=false; metSurvivors=false; helpedOldWoman=false; radioFixed=false; hasKeyCard=false; bunkerFound=false;
+        history=[]; historyIndex=-1; isViewingHistory=false; updateInvDisplay(); render();
+    }
+    document.getElementById('resetBtn').onclick=resetGame;
+    
+    // Вибір мови
+    document.querySelectorAll('.lang-btn').forEach(btn=>{
+        btn.addEventListener('click',(e)=>{
+            lang = btn.getAttribute('data-lang');
+            document.getElementById('langModal').style.display='none';
+            document.getElementById('gameContainer').style.display='block';
+            updateInvDisplay();
+            resetGame();
         });
-    }
-
-    // показ концовок с особым стилем
-    function showEnding() {
-        const endingData = endings[gameState.ending];
-        if (!endingData) {
-            storyEl.innerHTML = "❌ Пустота. Ошибка судьбы. Нажми «начать заново».";
-            optionsEl.innerHTML = '';
-            return;
-        }
-        storyEl.innerHTML = endingData.text;
-        optionsEl.innerHTML = ''; // убираем варианты, только рестарт
-    }
-
-    // сброс
-    function resetGame() {
-        gameState = {
-            step: 'intro',
-            fear: 0,
-            money: true,
-            ending: null
-        };
-        render();
-    }
-
-    // ----------- СЦЕНЫ И ВЕТКИ (17+ жёсткий триллер) -----------
-    const scenes = {
-        intro: {
-            text: `🧥 <strong>Подворотня, 00:17</strong><br><br>
-            — Эй, чë сонная ходишь? Дай закурить.<br>
-            Двое парней, старше лет на пять. Один в мятом пуховике, второй — с бритой головой. Позади глухая стена.<br>
-            Твои пальцы сжимают ключи в кармане. В другом кармане — деньги за смену (6500 рублей).<br><br>
-            <span style="color:#d98c5f;">«Отвечай быстро, они уже подходят»</span>`,
-            options: [
-                { label: "❄️ Холодно: «Отвалите, я звоню брату, он через двор»", action: (s) => { s.fear = Math.max(0, s.fear-1); s.money=true; }, nextStep: 'confront_cold' },
-                { label: "🔥 Горячо: «Руки убери, ментам позвоню, у меня тревожная кнопка»", action: (s) => { s.fear += 1; }, nextStep: 'confront_hot' },
-                { label: "💧 Тихий: «Я ничего не слышала, извините, спешу домой» (попытка уйти)", action: (s) => { s.fear += 2; }, nextStep: 'quiet_attempt' }
-            ]
-        },
-        confront_cold: {
-            text: `❄️ <strong>Ледяной ответ</strong><br><br>
-            — Брата? Да по шарам дадим и брату.<br>
-            Бритоголовый наступает. Ты пятишься к мусорным бакам. До выхода на проспект 40 метров.<br>
-            Но лысый достаёт зажигалку и светит в лицо.<br><br>
-            — Деньги давай, художка хренова.`,
-            options: [
-                { label: "🗣️ Крикнуть громко: «ПОЖАР! ПОМОГИТЕ!»", action: (s) => { s.fear -= 1; }, nextStep: 'scream_out' },
-                { label: "✊ Ударить ключами по руке", action: (s) => { s.fear += 1; }, nextStep: 'fight_keys' },
-                { label: "💸 Кинуть деньги в сторону и бежать", action: (s) => { s.money = false; }, nextStep: 'run_money_distract' }
-            ]
-        },
-        confront_hot: {
-            text: `🔥 <strong>«Ментов вызвать?»</strong><br><br>
-            Парень в пуховике зло усмехается и выбивает телефон из твоей руки. Тот падает в лужу.<br>
-            — Умная да? Сейчас мы тебя научим.<br>
-            Он хватает тебя за рукав куртки. Рвётся ткань. Ты отступаешь к стене, спиной чувствуешь холод кирпичей.`,
-            options: [
-                { label: "👊 Плюнуть в лицо и ударить коленом", action: (s) => { s.fear += 2; }, nextStep: 'violent_escalation' },
-                { label: "😭 Расплакаться и сказать про маму", action: (s) => { s.fear += 1; }, nextStep: 'cry_escape' },
-                { label: "🚨 Нажать громкую связь 112 (блеф)", action: (s) => { s.fear -= 1; }, nextStep: 'bluff_112' }
-            ]
-        },
-        quiet_attempt: {
-            text: `💧 Тишина дрожит<br><br>
-            — Ничего не слышала? Совсем глухая? — бритоголовый толкает тебя в плечо.<br>
-            Ты отходишь к стене, руки трясутся. Они чувствуют твой страх и улыбаются.<br>
-            — Слышь, угости на такси, а то неприятности будут.<br>
-            Один заходит со спины, перекрывая путь.`,
-            options: [
-                { label: "🔪 Достать перцовый баллончик (он есть в сумке)", action: (s) => { s.fear -= 2; }, nextStep: 'spray_attack' },
-                { label: "🏃‍♀️ Рвануть между ними", action: (s) => { s.fear += 1; }, nextStep: 'desperate_run' },
-                { label: "🪙 Отдать всю мелочь (около 400р)", action: (s) => { s.money = false; s.fear += 1; }, nextStep: 'give_small_money' }
-            ]
-        },
-        scream_out: {
-            text: `📢 Громкий крик<br><br>
-            Из окна ближайшей хрущёвки высунулась женщина:<br>
-            — Полицию вызываю, пошли вон, гниды!<br>
-            Парни замялись и быстро ушли, матерясь. Ты выбегаешь на проспект, сердце колотится.`,
-            options: [],
-            nextStep: null,
-            ending: 'safe_escape'
-        },
-        fight_keys: {
-            text: `⚔️ Удар ключами<br><br>
-            Ты вонзаешь ключ между фаланг лысого. Он взревел от боли, второй отшатнулся.<br>
-            Но через секунду первый бьёт тебя по лицу. Губа разбита, во рту железо.<br>
-            Ты падаешь на колени. Они пинают этюдник, но подъезжает машина — фары освещают подворотню. Нападающие сбегают.`,
-            options: [],
-            nextStep: null,
-            ending: 'beaten_but_alive'
-        },
-        run_money_distract: {
-            text: `💨 Деньги в лужу<br><br>
-            Ты швыряешь деньги в сторону мусорки. Оба кидаются к купюрам.<br>
-            Ты бежишь со всех ног, дыхание рвётся наружу. Выскакиваешь на свет. Дрожишь полчаса в круглосуточном магазине.<br>
-            Денег нет, но ты жива.`,
-            options: [],
-            nextStep: null,
-            ending: 'penniless_survive'
-        },
-        violent_escalation: {
-            text: `💢 Жестокая вспышка<br><br>
-            Плевок и удар. Пуховик звереет, хватает за волосы, бьёт головой о стену.<br>
-            Темнеет в глазах. Ты слышишь сквозь звон — они забирают телефон и карманные деньги.<br>
-            На земле остаёшься одна. Скулит дворовая собака.`,
-            options: [],
-            nextStep: null,
-            ending: 'trauma_night'
-        },
-        cry_escape: {
-            text: `😭 Слёзы и имя матери<br><br>
-            Твои слёзы настоящие. Руки дрожат. Вдруг бритоголовый останавливается.<br>
-            — Да брось, мелкая... пошли отсюда, — тянет второго.<br>
-            Они уходят, буркнув «не ссы, везучая». Ты кусаешь губы и, шатаясь, выходишь к людям.`,
-            options: [],
-            nextStep: null,
-            ending: 'tears_saved'
-        },
-        bluff_112: {
-            text: `📞 Блеф с полицией<br><br>
-            Ты кричишь в телефонную трубку несуществующего диспетчера:<br>
-            «Алло! Нападают в подворотне за пекарней! Срочно!»<br>
-            Парни на секунду цепенеют. Ты используешь момент и выбегаешь, даже не подобрав телефон.<br>
-            Вылетаешь на улицу — там люди, безопасно.`,
-            options: [],
-            nextStep: null,
-            ending: 'bluff_works'
-        },
-        spray_attack: {
-            text: `🌫️ Перцовый газ<br><br>
-            Ты выхватываешь баллончик из бокового кармана сумки и бьёшь струёй в лица обоим.<br>
-            Они орут, трут глаза, кашляют. Ты бежишь, не оглядываясь. Глаза щиплет от ветра, но свобода — во дворах горит фонарь.<br>
-            Дома ждёт горячий чай.`,
-            options: [],
-            nextStep: null,
-            ending: 'spray_victory'
-        },
-        desperate_run: {
-            text: `🏃‍♀️ Отчаянный рывок<br><br>
-            Ты резко уходишь вправо и пробегаешь между ними. Но спотыкаешься о бордюр.<br>
-            Падаешь, разбиваешь колено. Догоняют, пинают в бок. Забирают деньги и телефон.<br>
-            Оставляют лежать в грязи. Через десять минут ты встаёшь и хромаешь домой.`,
-            options: [],
-            nextStep: null,
-            ending: 'broken_and_robbed'
-        },
-        give_small_money: {
-            text: `🪙 Мелочь унижения<br><br>
-            — Всего четыреста рублей? — смеётся лысый и швыряет монеты тебе в лицо.<br>
-            — Унизили и отпустили. Иди работай дальше.<br>
-            Ты подбираешь мелочь с мокрого асфальта. Выходишь из подворотни с пустыми глазами.<br>
-            Но физически цела.`,
-            options: [],
-            nextStep: null,
-            ending: 'humiliated_but_whole'
-        }
-    };
-
-    const endings = {
-        safe_escape: { text: `🏆 <strong>КОНЦОВКА: КРИК СПАС</strong><br><br>Ты в безопасности. Женщина из окна вызвала полицию, парней задержали через квартал. Неля приходит домой, пьёт чай с мятой. Синяков нет — только дрожь в пальцах. Но она запомнит: голос — оружие.` },
-        beaten_but_alive: { text: `🩸 <strong>КОНЦОВКА: РАЗБИТАЯ ГУБА</strong><br><br>Жива, но лицо в крови. Прохожие помогли дойти до травмпункта. Деньги остались при тебе, но шрам на память. Неля боится темноты ещё полгода.` },
-        penniless_survive: { text: `💸 <strong>КОНЦОВКА: БЕЗ ДЕНЕГ, НО ЖИВА</strong><br><br>Парни подобрали 6500 и исчезли. Ты приходишь домой пешком через полгорода. Зарплата потеряна, но это просто деньги. Мама обнимает и плачет.` },
-        trauma_night: { text: `🖤 <strong>КОНЦОВКА: СТЕНА И ТИШИНА</strong><br><br>Тяжёлая. Ты приходишь в себя через час. Сотрясение, разбитая бровь. Телефон украден. Чужие люди вызвали скорую. Неля долго восстанавливается, но нападавших находят по камерам.` },
-        tears_saved: { text: `😢 <strong>КОНЦОВКА: СЛЁЗЫ ЖЕСТОЧЕ</strong><br><br>Неожиданно сработало — их что-то остановило. Может, совесть. Ты добегаешь до метро, дрожа от адреналина. Дома долго не можешь уснуть. Но ты не сломлена.` },
-        bluff_works: { text: `🎭 <strong>КОНЦОВКА: БЛЕФУНЬЯ</strong><br><br>Риск оправдался. Ты вырвалась на свет, потеряв дешёвый телефон, но сохранив деньги и достоинство. В следующий раз ты купишь настоящий газовый баллончик.` },
-        spray_victory: { text: `✅ <strong>КОНЦОВКА: ГАЗ В ЛИЦО</strong><br><br>Эффективная самооборона. Ты убежала без потерь, написала заявление в полицию. Нападающих нашли через неделю. Неля гордится собой — она не жертва.` },
-        broken_and_robbed: { text: `⚠️ <strong>КОНЦОВКА: РАЗБИТЫЕ НАДЕЖДЫ</strong><br><br>Синяки, украдено всё. Друзья скинулись на новый телефон. Ты злишься на себя за неуклюжесть, но это не твоя вина. Вина на тех, кто нападает.` },
-        humiliated_but_whole: { text: `🥀 <strong>КОНЦОВКА: МЕЛОЧЬ И ГОРДОСТЬ</strong><br><br>Они взяли только мелочь, но унижение сильнее боли. Ты возвращаешься домой и пересчитываешь оставшиеся 6000. В следующий раз ты ответишь по-другому.` }
-    };
-
-    // регистрируем кнопку сброса
-    document.getElementById('resetGame').addEventListener('click', resetGame);
-    render();
+    });
 </script>
 </body>
 </html>
