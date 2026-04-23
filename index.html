@@ -2,429 +2,490 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Осколки надії / Осколки надежды</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Сөздөн сөз – Кыргызча | Туура сөздөр гана | 30 деңгээл</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
         body {
-            background: #0a0a0f;
-            font-family: 'Courier New', monospace;
-            min-height: 100vh;
+            background: linear-gradient(145deg, #1e4b2e 0%, #0e3a22 100%);
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            margin: 0;
             padding: 20px;
         }
-        .game {
-            max-width: 1000px;
+        .game-container {
+            max-width: 750px;
             width: 100%;
-            background: #07070c;
-            border: 2px solid #2a2a35;
-            border-radius: 28px;
-            padding: 25px;
+            background: #fef5e0;
+            background-image: radial-gradient(circle at 10% 30%, rgba(255,245,200,0.4) 2%, transparent 2.2%);
+            background-size: 28px 28px;
+            border-radius: 72px 48px 72px 48px;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,200,0.9);
+            padding: 20px 24px 32px;
         }
-        .game-header {
+        h1 {
+            text-align: center;
+            font-size: 1.9rem;
+            margin: 0 0 8px;
+            color: #2c5a2e;
+            text-shadow: 3px 3px 0 #e9d6a3;
+            font-weight: 800;
+        }
+        .sub {
+            text-align: center;
+            font-style: italic;
+            color: #6b4c2c;
+            margin-top: -12px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            border-bottom: 1px dashed #c7a56b;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 6px;
+        }
+        .level-box {
+            background: #2a2418;
+            padding: 10px 16px;
+            border-radius: 100px;
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .title { color: #8a7aaa; font-size: 14px; letter-spacing: 2px; }
-        .stats { color: #6a6a8a; font-size: 12px; }
-        .scene {
-            background: #0c0c12;
-            border: 2px solid #2c2c3a;
-            border-radius: 20px;
-            padding: 28px;
-            min-height: 280px;
-            color: #e0e0ec;
-            font-size: 18px;
-            line-height: 1.65;
-            white-space: pre-wrap;
-            margin-bottom: 20px;
-            overflow-y: auto;
-            max-height: 380px;
-        }
-        .inventory-panel {
-            background: #0a0a12;
-            border: 2px solid #2a2a35;
-            border-radius: 40px;
-            padding: 10px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 15px;
-            align-items: center;
-        }
-        .inventory-title { color: #9a8aba; font-weight: bold; font-size: 14px; }
-        .inventory-items { display: flex; flex-wrap: wrap; gap: 6px 10px; }
-        .inventory-item {
-            background: #1a1a26;
-            border: 1px solid #4a4a66;
-            border-radius: 20px;
-            padding: 4px 12px;
-            color: #c0c0e0;
-            font-size: 13px;
-        }
-        .no-items { color: #6a6a8a; font-style: italic; font-size: 13px; }
-        .choices {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 25px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .choice {
-            background: #111117;
-            border: 2px solid #33333f;
-            color: #d0d0da;
-            padding: 12px 18px;
-            font-size: 15px;
-            border-radius: 16px;
-            text-align: left;
-            cursor: pointer;
-            transition: 0.1s;
-            font-family: inherit;
-        }
-        .choice:hover:not(.choice-disabled) {
-            background: #1e1e2a;
-            border-color: #7a7a9a;
-            transform: translateX(3px);
-        }
-        .choice-disabled {
-            background: #0a0a12;
-            border-color: #2a2a35;
-            color: #6a6a8a;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        .bottom-panel {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #0c0c12;
-            border: 2px solid #2a2a35;
-            border-radius: 20px;
-            padding: 12px 20px;
-            flex-wrap: wrap;
-        }
-        .arrow {
-            background: #111117;
-            border: 2px solid #33333f;
-            color: #d0d0da;
-            width: 44px;
-            height: 44px;
-            border-radius: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .arrow.disabled { opacity: 0.3; cursor: not-allowed; }
-        .save-code {
-            background: #0f0f17;
-            border: 2px solid #333340;
-            border-radius: 40px;
-            padding: 8px 16px;
-            flex: 1;
-            color: #b0b0d0;
-            font-family: monospace;
-            font-size: 12px;
-        }
-        .reset-btn {
-            background: #1a1a26;
-            border: 2px solid #4a4a66;
-            color: #d0d0e0;
-            padding: 8px 18px;
-            border-radius: 30px;
-            cursor: pointer;
-        }
-        .reset-btn:hover { background: #2a2a36; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0a12; }
-        ::-webkit-scrollbar-thumb { background: #4a4a66; border-radius: 10px; }
-
-        /* Модальное окно выбора языка */
-        .lang-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(6px);
-        }
-        .lang-card {
-            background: #0c0c14;
-            border: 3px solid #5a4a7a;
-            border-radius: 48px;
-            padding: 40px 50px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(100,70,150,0.3);
-        }
-        .lang-title {
-            color: #d0c0f0;
-            font-size: 28px;
-            margin-bottom: 35px;
-            font-family: monospace;
-        }
-        .lang-buttons {
-            display: flex;
-            gap: 35px;
-            justify-content: center;
-        }
-        .lang-btn {
-            background: #1a1a28;
-            border: 2px solid #7a6a9a;
-            color: #e0e0f0;
-            font-size: 28px;
-            padding: 15px 35px;
-            border-radius: 60px;
-            cursor: pointer;
+            color: #ffefb9;
             font-weight: bold;
+            margin-bottom: 20px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 2px 3px rgba(255,215,140,0.3);
+        }
+        .level-num {
+            background: #efc27d;
+            color: #2d2b1f;
+            padding: 5px 18px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+        }
+        .target-word {
+            background: #fff0cf;
+            text-align: center;
+            font-size: 2.7rem;
+            font-weight: 800;
+            letter-spacing: 6px;
+            padding: 20px 12px;
+            border-radius: 48px;
+            margin: 15px 0;
+            color: #3b2a1f;
+            box-shadow: inset 0 0 0 3px white, 0 8px 18px rgba(0,0,0,0.2);
+            font-family: monospace;
+            word-break: break-word;
+        }
+        .letters-hint {
+            background: #e7dbbc;
+            padding: 8px;
+            text-align: center;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #3a2c1c;
+            margin-bottom: 15px;
+        }
+        .input-area {
+            display: flex;
+            gap: 12px;
+            margin: 18px 0 10px;
+            flex-wrap: wrap;
+        }
+        #answerInput {
+            flex: 3;
+            padding: 14px 18px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 60px;
+            background: #fffff2;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05), 0 1px 2px #bc9a6b;
+            font-family: monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        #submitBtn {
+            flex: 1;
+            background: #e09d32;
+            border: none;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2a2412;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #784e1a;
+            transition: 0.05s linear;
+        }
+        #submitBtn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #784e1a;
+        }
+        .score-stats {
+            display: flex;
+            justify-content: space-between;
+            background: #d9c48b;
+            padding: 8px 16px;
+            border-radius: 40px;
+            margin: 15px 0 10px;
+            font-weight: bold;
+        }
+        .found-words {
+            background: #fcf3e0;
+            border-radius: 36px;
+            padding: 12px 18px;
+            min-height: 130px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 15px 0 8px;
+            border: 1px solid #e2cba3;
+        }
+        .found-words h3 {
+            margin: 0 0 8px 0;
+            font-size: 1rem;
+            color: #6a4318;
+        }
+        .word-badge {
+            display: inline-block;
+            background: #e9cfa0;
+            padding: 5px 12px;
+            margin: 4px 6px 4px 0;
+            border-radius: 32px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .message {
+            background: #3a2a1c;
+            color: #ffeaac;
+            padding: 8px;
+            border-radius: 40px;
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 12px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 14px;
+            margin-top: 14px;
+        }
+        .next-btn, .skip-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
             transition: 0.1s;
         }
-        .lang-btn:hover {
-            background: #2a2a3a;
-            transform: scale(1.02);
-            border-color: #b0a0d0;
+        .next-btn {
+            background: #568f3c;
+            color: white;
+        }
+        .skip-btn {
+            background: #7a5a3a;
+            color: #ffefcf;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .skip-btn:disabled {
+            background: #4f3e2a;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 20px;
+            color: #af8f60;
+        }
+        @media (max-width: 550px) {
+            .target-word { font-size: 1.9rem; letter-spacing: 2px; }
+            .action-buttons { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-<div class="game" id="gameContainer" style="display: none;">
-    <div class="game-header">
-        <div class="title" id="gameTitle">❄️ ОСКОЛКИ НАДЕЖДЫ ❄️</div>
-        <div class="stats" id="statsArea">реплик: 0 | предметов: 0</div>
-    </div>
-    <div id="sceneText" class="scene">Загрузка...</div>
-    <div class="inventory-panel">
-        <span class="inventory-title" id="invTitle">📦 ИНВЕНТАРЬ</span>
-        <div id="inventoryList" class="inventory-items"><span class="no-items">пусто</span></div>
-    </div>
-    <div id="choicesContainer" class="choices"></div>
-    <div class="bottom-panel">
-        <div style="display:flex; gap:8px"><div id="arrowLeft" class="arrow">←</div><div id="arrowRight" class="arrow">→</div></div>
-        <input id="saveCode" class="save-code" readonly value="---">
-        <button class="reset-btn" id="resetBtn">🔄 СБРОС</button>
-    </div>
-</div>
+<div class="game-container">
+    <h1>📖 СӨЗДӨН СӨЗ 🧩</h1>
+    <div style="text-align:center;"><span class="sub">Кыргызча оюн — 30 деңгээл (туура сөздөр гана)</span></div>
 
-<div id="langModal" class="lang-modal">
-    <div class="lang-card">
-        <div class="lang-title">🌍 ОБЕРИ МОВУ / ВЫБЕРИ ЯЗЫК</div>
-        <div class="lang-buttons">
-            <div class="lang-btn" data-lang="ua">🇺�А УКРАЇНСЬКА</div>
-            <div class="lang-btn" data-lang="ru">🇷🇺 РУССКИЙ</div>
-        </div>
+    <div class="level-box">
+        <span>🏔️ ДЕҢГЭЭЛ</span>
+        <span class="level-num" id="levelNum">1 / 30</span>
     </div>
+    <div class="target-word" id="targetWord">ЖҮРӨК</div>
+    <div class="letters-hint" id="lettersHint">🔤 Тамгалар: Ж, Ү, Р, Ө, К</div>
+
+    <div class="input-area">
+        <input type="text" id="answerInput" placeholder="Сөздү жаз (3+ тамга)" autocomplete="off" autofocus>
+        <button id="submitBtn">🔍 ТЕКШЕРҮҮ</button>
+    </div>
+
+    <div class="score-stats">
+        <span>⭐ ТАПКАН: <span id="foundCount">0</span></span>
+        <span>🎯 МАКСАТ: <span id="needCount">3</span></span>
+    </div>
+
+    <div class="found-words">
+        <h3>✅ Табылган сөздөр:</h3>
+        <div id="foundList">—</div>
+    </div>
+
+    <div class="action-buttons">
+        <button id="nextLevelBtn" class="next-btn" style="display: none;">➡️ КИЙИНКИ ДЕҢГЭЭЛ</button>
+        <button id="skipLevelBtn" class="skip-btn">⏩ ПРОПУСК (КД 3 мин)</button>
+    </div>
+    <div id="messageBox" class="message">✨ Жаңы сөздөрдү түз!</div>
+    <footer>📜 Эреже: баштапкы сөздүн тамгаларынан гана. <strong style="color:#ffd966">Чыныгы кыргыз сөздөрү гана</strong> (алдын ала бекитилген).</footer>
 </div>
 
 <script>
-    // ----- БАГАТОМОВНІСТЬ (UA + RU) -----
-    let lang = null; // 'ru' або 'ua'
-    
-    // Тексти для локалізації (ключі)
-    const texts = {
-        // Загальні
-        invTitle: { ru: "📦 ИНВЕНТАРЬ", ua: "📦 ІНВЕНТАР" },
-        emptyInv: { ru: "пусто", ua: "порожньо" },
-        statsReplic: { ru: "реплик:", ua: "реплік:" },
-        statsItems: { ru: "предметов:", ua: "предметів:" },
-        resetBtn: { ru: "🔄 СБРОС", ua: "🔄 СКИДАННЯ" },
-        titleGame: { ru: "❄️ ОСКОЛКИ НАДЕЖДЫ ❄️", ua: "❄️ УЛАМКИ НАДІЇ ❄️" },
-        continueBtn: { ru: "→ продолжить", ua: "→ продовжити" },
-        nextBtn: { ru: "→ дальше", ua: "→ далі" },
-        restartChoice: { ru: "→ начать заново", ua: "→ почати заново" },
+    // --------------------------------------------------------------
+    // 30 ДЕҢГЭЭЛ — АР БИРИНЕ ТУУРА СӨЗДӨРДҮН ТИЗМЕСИ (ИСПРАВЛЕННЫЙ)
+    // --------------------------------------------------------------
+    const LEVELS_DATA = [
+        { word: "ЖҮРӨК", need: 3, validWords: ["ЖҮР", "КӨР", "РӨК", "ЖӨР", "ҮРӨК"] },
+        { word: "БАЛАЛЫК", need: 4, validWords: ["БАЛА", "БАЛ", "АЛ", "ЛАК", "АЛЫС", "КАЛ", "КЫЛ", "БАЛЫК", "АК", "АЛА"] },
+        { word: "МЕКТЕП", need: 4, validWords: ["МЕК", "ТЕК", "КЕП", "ПЕК", "МЕТ", "КЕТ"] },
+        { word: "ЫРАСМАН", need: 4, validWords: ["ЫРАС", "МАН", "РАС", "АР", "САН", "ЫР", "АСМАН", "РАМА"] },
+        { word: "ТАБИГАТ", need: 5, validWords: ["ТАБИГАТ", "ТАБА", "БАТ", "АТА", "ТАГА", "ГИТ", "АБА", "ТАК", "ТАГЫ"] },
+        { word: "КҮНЧЫГЫШ", need: 5, validWords: ["КҮН", "ЧЫГЫШ", "КҮЧ", "ЫШ", "ГЫШ", "КҮНЧЫ", "ЫГЫШ"] },
+        { word: "АДАМКЕРЧИЛИК", need: 5, validWords: ["АДАМ", "КЕР", "ЧИЛ", "ДАМ", "КЕЛ", "АДАЛ", "ИЛИК", "КЕРЕК", "АДАМКЕР"] },
+        { word: "ЫЙЫКМАЧЫЛЫК", need: 5, validWords: ["ЫЙЫК", "МАЧЫ", "АЧЫК", "ЧАК", "ЫР", "КЫЛ", "ЫК", "АКЫЛ", "ЧЫК", "ЫСЫК"] },
+        { word: "МАМЛЕКЕТ", need: 5, validWords: ["МАМЛЕ", "МАМА", "КЕТ", "МЕКЕН", "АКЕ", "ТЕК", "ЛЕК", "МАЛ", "АК", "ЕЛ"] },
+        { word: "БИЛИМДҮҮЛҮК", need: 6, validWords: ["БИЛИМ", "БИЛ", "ИЛИМ", "ҮЛҮК", "ЛҮК", "КҮЛ", "МИЛ", "ДҮК"] },
+        { word: "КЫРГЫЗСТАН", need: 6, validWords: ["КЫРГЫЗ", "СТАН", "КЫЗ", "ТАН", "ГЫЗ", "ЗАН", "КЫР", "САН", "КАН", "АЗЫК"] },
+        { word: "ТАРБИЯ", need: 5, validWords: ["ТАР", "БИЯ", "АРБА", "ТАРА", "ИЯ", "БАР", "РАТ"] },
+        { word: "АКЫЛМАН", need: 5, validWords: ["АКЫЛ", "МАН", "АК", "КАН", "ЫЛАК", "АЛА", "ЛАН", "КАЛ", "ЫР", "АЛЫМ"] },
+        { word: "АЛТЫН", need: 4, validWords: ["АЛТЫН", "АЛ", "ТАН", "ЛАН", "ЫН", "АТ", "АНТ", "АЛТ"] },
+        { word: "КОНУМ", need: 4, validWords: ["КОН", "УМ", "КОНУМ", "НУМ", "КУМ", "УН", "КОНУ", "ОКУМ"] },
+        { word: "ЖАЗГЫЧЫЛЫК", need: 6, validWords: ["ЖАЗ", "ГЫЧ", "ЖАЗГЫЧ", "ЧЫЛЫК", "ЖАЗЫК", "АЗЫК", "КЫЛЫЧ", "ЧАК", "ЖАЛЫН", "ЫСЫК"] },
+        { word: "МУРАСТОО", need: 5, validWords: ["МУРАС", "СТОО", "МУР", "РАС", "ТОО", "АРА", "МАСТОО", "ТОСУУ", "САР", "УСТА"] },
+        { word: "ӨНӨРЛҮҮ", need: 5, validWords: ["ӨНӨР", "ӨР", "НӨР", "ЛҮҮ", "ӨН", "НӨРЛҮҮ"] },
+        { word: "КАРЫЛЫК", need: 5, validWords: ["КАР", "АРЫК", "ЫЛЫК", "АР", "РЫК", "КАРА", "ЛЫК", "КЫР", "КАРЫ", "ЫР"] },
+        { word: "БОТОНОЙ", need: 5, validWords: ["БОТО", "ТОНО", "БОЙ", "ОТОН", "ТОН", "НОЙ", "БОТ", "ОЙ", "ТОЙ"] },
+        { word: "ЖАРАТЫЛЫШ", need: 6, validWords: ["ЖАРА", "ТЫЛЫШ", "АРА", "ЖАР", "РАТ", "АТЫШ", "ЖАРЫК", "ТАРЫ", "ЫЛАЙ", "ШЫЛЫК"] },
+        { word: "ТАМГА", need: 4, validWords: ["ТАМ", "ГА", "ТАМГА", "АГА", "МАГА", "ТАГА", "АМА", "ГАМ"] },
+        { word: "ЭРКИНДИК", need: 5, validWords: ["ЭРК", "КИН", "ЭРКИН", "ДИК", "КИНДИК", "ИН", "РЭК", "ДЭЭР", "НЭР", "КИРЕ"] },
+        { word: "ЫРЧЫЛЫК", need: 5, validWords: ["ЫР", "ЧЫЛЫК", "ЫРЧЫ", "КЫЛ", "РЫК", "ЫРК", "ЧЫК", "ЫЛЫК", "ЧЫР", "КЫР"] },
+        { word: "БИЛЕМИ", need: 5, validWords: ["БИЛ", "ИЛЕ", "БИЛЕ", "МИЛ", "ЛЕМИ", "ИМ", "БИ", "ЛИМ", "ЕМИ"] },
+        { word: "КӨРКӨМ", need: 4, validWords: ["КӨР", "КӨРК", "РКӨ", "МӨК", "КӨМ", "ӨК"] },
+        { word: "САЛТТУУЛУК", need: 6, validWords: ["САЛТ", "ТУУЛУК", "АЛТУУ", "САЛ", "ТУУ", "ЛУК", "УК", "АЛТ", "ТАС", "САЛКЫН"] },
+        { word: "МААНИЛҮҮ", need: 5, validWords: ["МААН", "НИЛ", "ААНИ", "МААНИ", "ЛҮҮ", "МАНИ", "ИЛҮҮ", "АН", "МАА", "НИЛҮҮ"] },
+        { word: "НУРЛУУ", need: 4, validWords: ["НУР", "ЛУУ", "УЛУ", "РУЛ", "ЛУН", "УРУН", "УР", "НУ"] },
+        { word: "ТИЛЕК", need: 4, validWords: ["ТИЛ", "ЛЕК", "ИЛЕК", "ТИК", "ЕК", "КЕЛ", "ЛЕТ", "ИЛ", "КИЛ"] }
+    ];
+
+    // ----------------------------------- ОЮНДУН АБАЛЫ -----------------------------------
+    let currentLevelIdx = 0;
+    let currentLevel = null;
+    let foundWords = new Set();
+    let skipCooldownRemaining = 0;
+    let skipTimerInterval = null;
+    let skipButtonDisabled = false;
+
+    const targetWordEl = document.getElementById("targetWord");
+    const lettersHintEl = document.getElementById("lettersHint");
+    const levelNumSpan = document.getElementById("levelNum");
+    const foundCountSpan = document.getElementById("foundCount");
+    const needCountSpan = document.getElementById("needCount");
+    const foundListDiv = document.getElementById("foundList");
+    const answerInput = document.getElementById("answerInput");
+    const submitBtn = document.getElementById("submitBtn");
+    const nextLevelBtn = document.getElementById("nextLevelBtn");
+    const skipBtn = document.getElementById("skipLevelBtn");
+    const messageBox = document.getElementById("messageBox");
+
+    function normalizeWord(word) {
+        return word.trim().toUpperCase();
+    }
+
+    function canFormFromBase(candidate, baseWord) {
+        let baseInventory = new Map();
+        for (let ch of baseWord) {
+            baseInventory.set(ch, (baseInventory.get(ch) || 0) + 1);
+        }
+        let inv = new Map();
+        for (let [ch, cnt] of baseInventory.entries()) inv.set(ch, cnt);
+        for (let ch of candidate) {
+            if (!inv.has(ch) || inv.get(ch) === 0) return false;
+            inv.set(ch, inv.get(ch) - 1);
+        }
+        return true;
+    }
+
+    function isValidWord(candidate, levelData, alreadyFound) {
+        const cand = normalizeWord(candidate);
+        if (cand.length < 3) return false;
+        if (cand === levelData.word) return false;
+        if (alreadyFound.has(cand)) return false;
         
-        // Діалоги та сцени (всі репліки)
-        // Подъезд
-        startScene: { ru: "📍 ПОДЪЕЗД\n\nТы приходишь в себя на холодном бетонном полу. Голова гудит. Рядом лежит девушка — её лицо бледное. В руке зажата фотография и записка: «Школа №7. Там правда». Нужно выбираться.", ua: "📍 ПІД'ЇЗД\n\nТи приходиш до тями на холодній бетонній підлозі. Голова гуде. Поруч лежить дівчина — її обличчя бліде. У руці затиснуте фото й записка: «Школа №7. Там правда». Треба вибиратися." },
-        choiceGirl: { ru: "осмотреть девушку", ua: "оглянути дівчину" },
-        choiceExit: { ru: "выйти на улицу", ua: "вийти на вулицю" },
-        choiceSearchPorch: { ru: "обыскать подъезд", ua: "обшукати під'їзд" },
-        girlCheck: { ru: "Кожа холодная. Она не дышит. На шее странная отметина. На обороте фото: «Помни. Ты был здесь». Мурашки по спине.", ua: "Шкіра холодна. Вона не дихає. На шиї дивна відмітина. На звороті фото: «Пам'ятай. Ти був тут». Мурашки по спині." },
-        searchPorchRes: { ru: "В почтовом ящике находишь нож и спички. Под ним газета: «Эпидемия. Город на карантине». Дата — три недели назад.", ua: "У поштовій скриньці знаходиш ніж та сірники. Під ним газета: «Епідемія. Місто на карантині». Дата — три тижні тому." },
-        // Вулиця
-        streetStart: { ru: "📍 УЛИЦА\n\nСерый туман над разбитым асфальтом. Перевёрнутые машины. Вдалеке школа №7. Справа тёмный парк. Холод пробирает до костей.", ua: "📍 ВУЛИЦЯ\n\nСірий туман над розбитим асфальтом. Перевернуті машини. Вдалині школа №7. Праворуч темний парк. Холод пробирає до кісток." },
-        choiceSchool: { ru: "идти к школе", ua: "йти до школи" },
-        choicePark: { ru: "зайти в парк", ua: "зайти в парк" },
-        choiceMap: { ru: "посмотреть карту", ua: "подивитись карту" },
-        mapCheck: { ru: "На карте: школа, парк, лес, лагерь выживших, военный бункер. Красным обведена школа: «Начало всего».", ua: "На карті: школа, парк, ліс, табір вцілілих, військовий бункер. Червоним обведена школа: «Початок всього»." },
-        // Парк
-        parkEntrance: { ru: "📍 ПАРК\n\nСтарые деревья. На скамейке девочка в школьной форме. Рядом рюкзак.", ua: "📍 ПАРК\n\nСтарі дерева. На лавці дівчинка у шкільній формі. Поруч рюкзак." },
-        choiceApproach: { ru: "подойти к девочке", ua: "підійти до дівчинки" },
-        choiceBackpack: { ru: "осмотреть рюкзак", ua: "оглянути рюкзак" },
-        girlParkTalk: { ru: "Девочка: «Иди в школу. Там ответы». Она даёт отмычку и исчезает.", ua: "Дівчинка: «Іди до школи. Там відповіді». Вона дає відмичку і зникає." },
-        parkBackpackRes: { ru: "В рюкзаке: еда, вода, карта. Дневник: «Они пришли ночью».", ua: "У рюкзаку: їжа, вода, карта. Щоденник: «Вони прийшли вночі»." },
-        // Школа
-        schoolHall: { ru: "📍 ШКОЛА\n\nДвери распахнуты. Пахнет плесенью. Стены в граффити: «ОНИ ЗНАЮТ», «НЕ ХОДИ В ПОДВАЛ».", ua: "📍 ШКОЛА\n\nДвері розчинені. Пахне пліснявою. Стіни в графіті: «ВОНИ ЗНАЮТЬ», «НЕ ХОДИ В ПІДВАЛ»." },
-        choiceClass: { ru: "пойти в класс", ua: "піти в клас" },
-        choiceBasement: { ru: "спуститься в подвал", ua: "спуститися в підвал" },
-        schoolClass: { ru: "Класс разгромлен. На доске: «КЛЮЧ В КНИГЕ».", ua: "Клас розгромлений. На дошці: «КЛЮЧ У КНИЗІ»." },
-        searchBooks: { ru: "искать в книгах", ua: "шукати в книгах" },
-        searchCloset: { ru: "осмотреть шкаф", ua: "оглянути шафу" },
-        booksRes: { ru: "В книге находишь отмычки и фото класса. На обороте: «Я знаю, ты вернёшься».", ua: "У книзі знаходиш відмички та фото класу. На звороті: «Я знаю, ти повернешся»." },
-        closetRes: { ru: "В шкафу фонарик. Дневник: «Они из лаборатории».", ua: "У шафі ліхтарик. Щоденник: «Вони з лабораторії»." },
-        basementDoor: { ru: "Дверь в подвал заперта. Надпись: «ОНИ ТАМ». Слышна капель.", ua: "Двері в підвал замкнені. Напис: «ВОНИ ТАМ». Чути капіж." },
-        choicePick: { ru: "вскрыть отмычкой", ua: "відкрити відмичкою" },
-        basementInside: { ru: "В углу сидит человек в плаще. «Я Сергей, учитель. Вирус из лаборатории. Выжившие ушли в лес».", ua: "У кутку сидить чоловік у плащі. «Я Сергій, учитель. Вірус з лабораторії. Вцілілі пішли в ліс»." },
-        choiceTrust: { ru: "довериться", ua: "довіритись" },
-        choiceAsk: { ru: "спросить подробности", ua: "запитати подробиці" },
-        trustRes: { ru: "Сергей: «Пойдём в лагерь». Он даёт аптечку и бинты. Нога заживает.", ua: "Сергій: «Ходімо в табір». Він дає аптечку та бинти. Нога загоюється." },
-        askRes: { ru: "«Эпидемия три недели назад. Люди меняются. Бункер на востоке». Он даёт рацию.", ua: "«Епідемія три тижні тому. Люди змінюються. Бункер на сході». Він дає рацію." },
-        // Лагерь
-        campArrival: { ru: "📍 ЛАГЕРЬ\n\nПалатки, костёр. Старейшина: «Новичок? Проходи». Рядом охотник Дмитрий и врач Анна.", ua: "📍 ТАБІР\n\nНамети, багаття. Старійшина: «Новачок? Проходь». Поряд мисливець Дмитро та лікарка Анна." },
-        choiceElder: { ru: "поговорить со старейшиной", ua: "поговорити зі старійшиною" },
-        choiceAskFood: { ru: "попросить еды", ua: "попросити їжі" },
-        choiceExplore: { ru: "осмотреть лагерь", ua: "оглянути табір" },
-        elderTalk: { ru: "«На востоке военный бункер. Там припасы. Поможешь найти — примешь нас в семью». Он даёт карту.", ua: "«На сході військовий бункер. Там запаси. Допоможеш знайти — приймеш нас у сім'ю». Він дає карту." },
-        askFoodRes: { ru: "Тебе дают еду и воду. «Держи, мы все братья».", ua: "Тобі дають їжу та воду. «Тримай, ми всі брати»." },
-        exploreCamp: { ru: "Старая рация. Нужны батарейки.", ua: "Стара рація. Потрібні батарейки." },
-        fixRadio: { ru: "починить рацию", ua: "полагодити рацію" },
-        fixRadioRes: { ru: "Рация ожила. Слышен голос: «...помощь... бункер 7... координаты...». Люди плачут от радости.", ua: "Рація ожила. Чути голос: «...допомога... бункер 7... координати...». Люди плачуть від радості." },
-        campStayEnd: { ru: "🏆 КОНЦОВКА: Ты остаёшься в лагере. Живёшь в мире, помогаешь другим. Но чувствуешь — правда осталась где-то в школе. Однажды ночью ты смотришь на звёзды и понимаешь — твой путь ещё не закончен. 🏆", ua: "🏆 КІНЦІВКА: Ти залишаєшся в таборі. Живеш у мирі, допомагаєш іншим. Але відчуваєш — правда залишилась десь у школі. Однієї ночі ти дивишся на зорі й розумієш — твій шлях ще не закінчений. 🏆" },
-        // Ліс і фінал
-        forestPath: { ru: "📍 ЛЕС\n\nВысокие сосны, снег. Дмитрий идёт впереди. «Бункер должен быть где-то здесь». Тропа раздваивается.", ua: "📍 ЛІС\n\nВисокі сосни, сніг. Дмитро йде попереду. «Бункер має бути десь тут». Стежка роздвоюється." },
-        choiceHut: { ru: "пойти к избушке", ua: "піти до хатинки" },
-        choiceDeep: { ru: "идти дальше по тропе", ua: "йти далі стежкою" },
-        hutKnock: { ru: "постучать", ua: "постукати" },
-        hutAround: { ru: "обойти вокруг", ua: "обійти навколо" },
-        hutKnockRes: { ru: "Старушка: «Заходите, погрейтесь». Она даёт еду и спички. «Бункер? Идите дальше по тропе, за оврагом».", ua: "Бабуся: «Заходьте, погрійтесь». Вона дає їжу та сірники. «Бункер? Ідіть далі стежкою, за яром»." },
-        hutAroundRes: { ru: "За избушкой находишь старый топор.", ua: "За хатинкою знаходиш стару сокиру." },
-        forestDeep: { ru: "Глубже в лесу. Слышны звуки. Впереди железная дверь, вросшая в землю. Военный бункер!", ua: "Глибше в лісі. Чути звуки. Попереду залізні двері, що вросли в землю. Військовий бункер!" },
-        bunkerDoor: { ru: "Тяжёлая железная дверь. Кодовая панель. Нужен код доступа.", ua: "Важкі залізні двері. Кодова панель. Потрібен код доступу." },
-        bunkerOpenRes: { ru: "Дверь открывается. Внутри — склад: ящики с едой, водой, медикаментами, оружием. Анна плачет. Старейшина жмёт руку: «Ты спас нас всех!»", ua: "Двері відчиняються. Всередині — склад: ящики з їжею, водою, медикаментами, зброєю. Анна плаче. Старійшина тисне руку: «Ти врятував нас усіх!»" },
-        bunkerInside: { ru: "Внутри бункера тепло и безопасно. На стенах карты, радиостанция. Выжившие обустраиваются. Ты смотришь на фотографию девочки из подъезда — она улыбается. Кажется, она знала, что всё закончится хорошо.", ua: "Всередині бункера тепло та безпечно. На стінах карти, радіостанція. Вцілілі облаштовуються. Ти дивишся на фотографію дівчинки з під'їзду — вона посміхається. Здається, вона знала, що все закінчиться добре." },
-        goodEnding: { ru: "✨✨✨ ХОРОШАЯ КОНЦОВКА ✨✨✨\n\nВы нашли бункер и спасли лагерь. Теперь у вас есть убежище, припасы и будущее. Вы вместе — а значит, выживете. Город остался позади, но впереди новая жизнь. Фотография девочки всегда с тобой — напоминание о том, что надежда умирает последней. ✨✨✨", ua: "✨✨✨ ХОРОША КІНЦІВКА ✨✨✨\n\nВи знайшли бункер і врятували табір. Тепер у вас є укриття, запаси та майбутнє. Ви разом — а значить, виживете. Місто залишилося позаду, а попереду нове життя. Фотографія дівчинки завжди з тобою — нагадування про те, що надія вмирає останньою. ✨✨✨" },
-        defaultNext: { ru: "Ты продолжаешь путь по пустошам...", ua: "Ти продовжуєш шлях пусткою..." },
-    };
-    
-    function t(key) { return texts[key]?.[lang] || texts[key]?.ru || key; }
-    
-    // Інвентар
-    let inventory = {
-        'еда':0,'вода':0,'бинты':0,'аптечка':0,'батарейки':0,'спички':0,
-        'верёвка':0,'отмычка':0,'нож':0,'фонарик':0,'рация':0,'карта':0
-    };
-    const itemNames = {
-        'еда':{ru:'🍞 Еда',ua:'🍞 Їжа'},'вода':{ru:'💧 Вода',ua:'💧 Вода'},'бинты':{ru:'🩹 Бинты',ua:'🩹 Бинти'},
-        'аптечка':{ru:'💊 Аптечка',ua:'💊 Аптечка'},'батарейки':{ru:'🔋 Батарейки',ua:'🔋 Батарейки'},
-        'спички':{ru:'🔥 Спички',ua:'🔥 Сірники'},'верёвка':{ru:'🪢 Верёвка',ua:'🪢 Мотузка'},
-        'отмычка':{ru:'🔓 Отмычка',ua:'🔓 Відмичка'},'нож':{ru:'🔪 Нож',ua:'🔪 Ніж'},'фонарик':{ru:'🔦 Фонарик',ua:'🔦 Ліхтарик'},
-        'рация':{ru:'📻 Рация',ua:'📻 Рація'},'карта':{ru:'🗺️ Карта',ua:'🗺️ Карта'}
-    };
-    function addItem(id,q=1){ if(inventory[id]!==undefined){ inventory[id]+=q; updateInvDisplay(); } }
-    function removeItem(id,q=1){ if(inventory[id]>=q){ inventory[id]-=q; updateInvDisplay(); return true; } return false; }
-    function hasItem(id,q=1){ return inventory[id]>=q; }
-    
-    function updateInvDisplay(){
-        let items=[];
-        for(let [id,qty] of Object.entries(inventory)) if(qty>0) items.push(`<span class="inventory-item">${itemNames[id][lang]} x${qty}</span>`);
-        document.getElementById('inventoryList').innerHTML = items.length ? items.join('') : `<span class="no-items">${t('emptyInv')}</span>`;
-        let total=Object.values(inventory).reduce((a,b)=>a+b,0);
-        document.getElementById('statsArea').innerHTML = `${t('statsReplic')} ${replicaCount} | ${t('statsItems')} ${total}`;
-        document.getElementById('invTitle').innerText = t('invTitle');
-        document.getElementById('resetBtn').innerText = t('resetBtn');
-        document.getElementById('gameTitle').innerText = t('titleGame');
+        const validWordsList = levelData.validWords.map(w => normalizeWord(w));
+        if (!validWordsList.includes(cand)) return false;
+        if (!canFormFromBase(cand, levelData.word)) return false;
+        
+        return true;
     }
-    
-    let currentLocation="Подъезд", sceneId="start", ending=null, replicaCount=0;
-    let metGirl=false,injured=false,park=false,metStranger=false,metSurvivors=false,helpedOldWoman=false,radioFixed=false,hasKeyCard=false,bunkerFound=false;
-    let history=[],historyIndex=-1,isViewingHistory=false;
-    const sceneEl=document.getElementById('sceneText'), choicesEl=document.getElementById('choicesContainer');
-    
-    function addReplica(){ replicaCount++; updateInvDisplay(); }
-    function addToHistory(text){ history.push(text); historyIndex=history.length-1; isViewingHistory=false; }
-    function updateArrows(){ arrowLeft.classList.toggle('disabled',historyIndex<=0); arrowRight.classList.toggle('disabled',historyIndex>=history.length-1||!isViewingHistory); }
-    
-    function addChoice(text, nextScene, nextLoc=null, needItem=null, needQty=1, useItem=null){
-        let btn=document.createElement('button'); btn.className='choice';
-        let canDo=!needItem||hasItem(needItem,needQty);
-        if(!canDo){ btn.classList.add('choice-disabled'); btn.disabled=true; btn.innerText=`${text} ❌ (потрібно: ${itemNames[needItem]?.[lang]||needItem})`; }
-        else{ btn.innerText=text; btn.onclick=()=>{ if(useItem&&needItem) removeItem(useItem,needQty); if(nextLoc) currentLocation=nextLoc; sceneId=nextScene; ending=null; render(); }; }
-        choicesEl.appendChild(btn);
+
+    function updateUI() {
+        foundCountSpan.innerText = foundWords.size;
+        if (foundWords.size === 0) {
+            foundListDiv.innerHTML = "—";
+        } else {
+            const sorted = Array.from(foundWords).sort();
+            const badges = sorted.map(w => `<span class="word-badge">${w}</span>`).join('');
+            foundListDiv.innerHTML = badges;
+        }
+        
+        if (foundWords.size >= currentLevel.need) {
+            nextLevelBtn.style.display = "block";
+            messageBox.innerHTML = "🎉 МАКСАТКА ЖЕТТИҢИЗ! Кийинки деңгээлге өтүңүз! 🎉";
+        } else {
+            nextLevelBtn.style.display = "none";
+            if (!messageBox.innerHTML.includes("Пропуск")) 
+                messageBox.innerHTML = "✨ Туура сөздөрдү табыңыз ✨";
+        }
     }
-    function addNext(nextScene,nextLoc=null){
-        let btn=document.createElement('button'); btn.className='choice'; btn.innerText=t('nextBtn');
-        btn.onclick=()=>{ if(nextLoc) currentLocation=nextLoc; sceneId=nextScene; render(); };
-        choicesEl.appendChild(btn);
+
+    function loadLevel(levelIndex) {
+        if (levelIndex >= LEVELS_DATA.length) {
+            targetWordEl.innerText = "ЖЕҢИШ!";
+            lettersHintEl.innerText = "🏆 БАРДЫК 30 ДЕҢГЭЭЛ АЯКТАЛДЫ 🏆";
+            answerInput.disabled = true;
+            submitBtn.disabled = true;
+            nextLevelBtn.style.display = "none";
+            skipBtn.style.display = "none";
+            messageBox.innerHTML = "КУТТУКТАЙБЫЗ! Сиз улуу оюнчу болдуңуз!";
+            return;
+        }
+        
+        currentLevel = LEVELS_DATA[levelIndex];
+        foundWords.clear();
+        
+        targetWordEl.innerText = currentLevel.word;
+        const lettersArray = [...currentLevel.word].join(', ');
+        lettersHintEl.innerText = `🔤 Тамгалар: ${lettersArray}`;
+        levelNumSpan.innerText = `${levelIndex+1} / ${LEVELS_DATA.length}`;
+        needCountSpan.innerText = currentLevel.need;
+        answerInput.disabled = false;
+        submitBtn.disabled = false;
+        answerInput.value = "";
+        answerInput.focus();
+        updateUI();
+        messageBox.innerHTML = `📖 ${currentLevel.word} — ${currentLevel.need} сөз табыңыз.`;
+        nextLevelBtn.style.display = "none";
     }
-    
-    function render(){
-        if(isViewingHistory) return;
-        choicesEl.innerHTML='';
-        if(ending){ sceneEl.innerText=ending; addChoice(t('restartChoice'),'start','Подъезд'); addToHistory(ending); return; }
-        let text=""; addReplica();
-        // Велика логіка сцен (майже як у вихідній, але тексти через t())
-        if(currentLocation==="Подъезд" && sceneId==="start"){
-            text=t('startScene');
-            addChoice(t('choiceGirl'),"girl_check","Подъезд"); addChoice(t('choiceExit'),"street_start","Улица"); addChoice(t('choiceSearchPorch'),"search_porch","Подъезд");
-        } else if(currentLocation==="Подъезд" && sceneId==="girl_check"){ text=t('girlCheck'); metGirl=true; addChoice(t('choiceExit'),"street_start","Улица"); addChoice(t('choiceSearchPorch'),"search_porch","Подъезд");
-        } else if(currentLocation==="Подъезд" && sceneId==="search_porch"){ text=t('searchPorchRes'); addItem('нож',1); addItem('спички',3); addChoice(t('choiceExit'),"street_start","Улица");
-        } else if(currentLocation==="Улица" && sceneId==="street_start"){ text=t('streetStart'); addChoice(t('choiceSchool'),"school_hall","Школа"); addChoice(t('choicePark'),"park_entrance","Парк"); if(hasItem('карта')) addChoice(t('choiceMap'),"map_check","Улица");
-        } else if(currentLocation==="Улица" && sceneId==="map_check"){ text=t('mapCheck'); addChoice(t('choiceSchool'),"school_hall","Школа"); addChoice("→ Лагерь","camp_arrival","Лагерь выживших");
-        } else if(currentLocation==="Парк" && sceneId==="park_entrance"){ text=t('parkEntrance'); addChoice(t('choiceApproach'),"girl_park_talk","Парк"); addChoice(t('choiceBackpack'),"park_backpack","Парк"); addChoice(t('choiceExit'),"street_start","Улица");
-        } else if(currentLocation==="Парк" && sceneId==="girl_park_talk"){ text=t('girlParkTalk'); addItem('отмычка',1); addChoice(t('choiceBackpack'),"park_backpack","Парк"); addChoice(t('choiceExit'),"street_start","Улица");
-        } else if(currentLocation==="Парк" && sceneId==="park_backpack"){ text=t('parkBackpackRes'); addItem('еда',2); addItem('вода',2); addItem('карта',1); addChoice("← назад","park_entrance","Парк");
-        } else if(currentLocation==="Школа" && sceneId==="school_hall"){ text=t('schoolHall'); addChoice(t('choiceClass'),"school_class","Школа"); addChoice(t('choiceBasement'),"basement_door","Школа"); addChoice(t('choiceExit'),"street_start","Улица");
-        } else if(currentLocation==="Школа" && sceneId==="school_class"){ text=t('schoolClass'); addChoice(t('searchBooks'),"search_books","Школа"); addChoice(t('searchCloset'),"search_closet","Школа"); addChoice("← назад","school_hall","Школа");
-        } else if(currentLocation==="Школа" && sceneId==="search_books"){ text=t('booksRes'); addItem('отмычка',2); addChoice(t('searchCloset'),"search_closet","Школа"); addChoice("← назад","school_hall","Школа");
-        } else if(currentLocation==="Школа" && sceneId==="search_closet"){ text=t('closetRes'); addItem('фонарик',1); addChoice("← назад","school_hall","Школа");
-        } else if(currentLocation==="Школа" && sceneId==="basement_door"){ text=t('basementDoor'); if(hasItem('отмычка')) addChoice(t('choicePick'),"basement_inside","Школа",'отмычка',1,'отмычка'); else addChoice("відмичка","basement_inside","Школа",'отмычка'); addChoice("← назад","school_hall","Школа");
-        } else if(currentLocation==="Школа" && sceneId==="basement_inside"){ text=t('basementInside'); metStranger=true; addChoice(t('choiceTrust'),"basement_trust","Школа"); addChoice(t('choiceAsk'),"basement_ask","Школа");
-        } else if(currentLocation==="Школа" && sceneId==="basement_trust"){ text=t('trustRes'); addItem('аптечка',1); addItem('бинты',2); addChoice("→ Лагерь","camp_arrival","Лагерь выживших"); addChoice("← залишитись","school_hall","Школа");
-        } else if(currentLocation==="Школа" && sceneId==="basement_ask"){ text=t('askRes'); addItem('рация',1); addChoice("→ Лагерь","camp_arrival","Лагерь выживших"); addChoice("← залишитись","school_hall","Школа");
-        } else if(currentLocation==="Лагерь выживших" && sceneId==="camp_arrival"){ text=t('campArrival'); metSurvivors=true; addChoice(t('choiceElder'),"elder_talk","Лагерь выживших"); addChoice(t('choiceAskFood'),"ask_food_camp","Лагерь выживших"); addChoice(t('choiceExplore'),"explore_camp","Лагерь выживших");
-        } else if(currentLocation==="Лагерь выживших" && sceneId==="elder_talk"){ text=t('elderTalk'); addItem('карта',1); addChoice("→ в лес","forest_path","Лес"); addChoice("відмовитись","camp_stay","Лагерь выживших");
-        } else if(currentLocation==="Лагерь выживших" && sceneId==="ask_food_camp"){ text=t('askFoodRes'); addItem('еда',2); addItem('вода',2); addChoice(t('choiceElder'),"elder_talk","Лагерь выживших"); addChoice(t('choiceExplore'),"explore_camp","Лагерь выживших");
-        } else if(currentLocation==="Лагерь выживших" && sceneId==="explore_camp"){ text=t('exploreCamp'); if(hasItem('батарейки')) addChoice(t('fixRadio'),"fix_radio","Лагерь выживших",'батарейки',2,'батарейки'); addChoice("← назад","camp_arrival","Лагерь выживших");
-        } else if(currentLocation==="Лагерь выживших" && sceneId==="fix_radio"){ text=t('fixRadioRes'); radioFixed=true; addChoice("← назад","camp_arrival","Лагерь выживших");
-        } else if(currentLocation==="Лагерь выживших" && sceneId==="camp_stay"){ ending=t('campStayEnd'); render(); return;
-        } else if(currentLocation==="Лес" && sceneId==="forest_path"){ text=t('forestPath'); addChoice(t('choiceHut'),"forest_hut","Лес"); addChoice(t('choiceDeep'),"forest_deep","Лес"); addChoice("← назад","camp_arrival","Лагерь выживших");
-        } else if(currentLocation==="Лес" && sceneId==="forest_hut"){ text="Охотничья избушка. Из трубы идёт дым."; addChoice(t('hutKnock'),"hut_knock","Лес"); addChoice(t('hutAround'),"hut_around","Лес");
-        } else if(currentLocation==="Лес" && sceneId==="hut_knock"){ text=t('hutKnockRes'); addItem('еда',2);addItem('вода',2);addItem('спички',3); helpedOldWoman=true; addChoice(t('choiceDeep'),"forest_deep","Лес"); addChoice("← назад","forest_path","Лес");
-        } else if(currentLocation==="Лес" && sceneId==="hut_around"){ text=t('hutAroundRes'); addItem('нож',1); addChoice(t('hutKnock'),"hut_knock","Лес");
-        } else if(currentLocation==="Лес" && sceneId==="forest_deep"){ text=t('forestDeep'); addChoice("осмотреть дверь","bunker_door","Бункер"); addChoice("← назад","forest_path","Лес");
-        } else if(currentLocation==="Бункер" && sceneId==="bunker_door"){ text=t('bunkerDoor'); if(hasItem('карта')) addChoice("використати карту","bunker_open","Бункер",'карта',1,'карта'); else addChoice("зламати","bunker_open","Бункер",'отмычка'); addChoice("← назад","forest_path","Лес");
-        } else if(currentLocation==="Бункер" && sceneId==="bunker_open"){ text=t('bunkerOpenRes'); addItem('еда',20);addItem('вода',20);addItem('аптечка',5);addItem('бинты',10); bunkerFound=true; addChoice("увійти","bunker_inside","Бункер");
-        } else if(currentLocation==="Бункер" && sceneId==="bunker_inside"){ text=t('bunkerInside'); addChoice("залишитись","final_good","Бункер");
-        } else if(currentLocation==="Бункер" && sceneId==="final_good"){ ending=t('goodEnding'); render(); return;
-        } else { addNext("street_start","Улица"); text=t('defaultNext'); }
-        let locationTag = `<span style="background:#1e1e2a; padding:3px 12px; border-radius:20px; font-size:12px;">📍 ${currentLocation}</span><br><br>`;
-        sceneEl.innerHTML = locationTag + text.replace(/\n/g,'<br>');
-        addToHistory(text); updateArrows(); updateInvDisplay();
+
+    function attemptAddWord() {
+        const raw = answerInput.value.trim();
+        if (raw === "") {
+            messageBox.innerHTML = "⚠️ Сөздү жазыңыз!";
+            answerInput.value = "";
+            answerInput.focus();
+            return;
+        }
+        const candidate = normalizeWord(raw);
+        if (!isValidWord(candidate, currentLevel, foundWords)) {
+            const validList = currentLevel.validWords.map(w => normalizeWord(w)).join(", ");
+            messageBox.innerHTML = `❌ "${candidate}" — уруксат берилген сөздөрдүн ичинде жок! (${validList})`;
+            answerInput.value = "";
+            answerInput.focus();
+            return;
+        }
+        
+        foundWords.add(candidate);
+        messageBox.innerHTML = `✅ " ${candidate} " туура! +1 сөз!`;
+        answerInput.value = "";
+        updateUI();
+        answerInput.focus();
     }
-    
-    const arrowLeft=document.getElementById('arrowLeft'), arrowRight=document.getElementById('arrowRight');
-    arrowLeft.onclick=()=>{ if(historyIndex>0) { historyIndex--; sceneEl.innerText=history[historyIndex]; choicesEl.innerHTML=''; let btn=document.createElement('button'); btn.className='choice'; btn.innerText=t('continueBtn'); btn.onclick=()=>{ isViewingHistory=false; render(); }; choicesEl.appendChild(btn); isViewingHistory=true; updateArrows(); } };
-    arrowRight.onclick=()=>{ if(isViewingHistory && historyIndex<history.length-1){ historyIndex++; sceneEl.innerText=history[historyIndex]; choicesEl.innerHTML=''; let btn=document.createElement('button'); btn.className='choice'; btn.innerText=t('continueBtn'); btn.onclick=()=>{ isViewingHistory=false; render(); }; choicesEl.appendChild(btn); isViewingHistory=true; updateArrows(); } };
-    
-    function resetGame(){
-        inventory={'еда':0,'вода':0,'бинты':0,'аптечка':0,'батарейки':0,'спички':0,'верёвка':0,'отмычка':0,'нож':0,'фонарик':0,'рация':0,'карта':0};
-        currentLocation="Подъезд"; sceneId="start"; ending=null; replicaCount=0;
-        metGirl=false; injured=false; park=false; metStranger=false; metSurvivors=false; helpedOldWoman=false; radioFixed=false; hasKeyCard=false; bunkerFound=false;
-        history=[]; historyIndex=-1; isViewingHistory=false; updateInvDisplay(); render();
+
+    function goToNextLevel() {
+        if (foundWords.size >= currentLevel.need) {
+            currentLevelIdx++;
+            loadLevel(currentLevelIdx);
+        } else {
+            messageBox.innerHTML = `⛔ Дагы ${currentLevel.need - foundWords.size} сөз табышыңыз керек!`;
+        }
     }
-    document.getElementById('resetBtn').onclick=resetGame;
-    
-    // Вибір мови
-    document.querySelectorAll('.lang-btn').forEach(btn=>{
-        btn.addEventListener('click',(e)=>{
-            lang = btn.getAttribute('data-lang');
-            document.getElementById('langModal').style.display='none';
-            document.getElementById('gameContainer').style.display='block';
-            updateInvDisplay();
-            resetGame();
+
+    function startSkipCooldown() {
+        if (skipTimerInterval) clearInterval(skipTimerInterval);
+        skipCooldownRemaining = 180;
+        skipButtonDisabled = true;
+        skipBtn.disabled = true;
+        updateSkipButtonText();
+
+        skipTimerInterval = setInterval(() => {
+            if (skipCooldownRemaining <= 1) {
+                clearInterval(skipTimerInterval);
+                skipTimerInterval = null;
+                skipButtonDisabled = false;
+                skipBtn.disabled = false;
+                updateSkipButtonText();
+                messageBox.innerHTML = "⏰ Пропуск кайра жеткиликтүү! (КД бүттү)";
+                setTimeout(() => {
+                    if (messageBox.innerHTML.includes("жеткиликтүү")) messageBox.innerHTML = "✨ Оюн уланууда ✨";
+                }, 2000);
+            } else {
+                skipCooldownRemaining--;
+                updateSkipButtonText();
+            }
+        }, 1000);
+    }
+
+    function updateSkipButtonText() {
+        if (skipButtonDisabled && skipCooldownRemaining > 0) {
+            const minutes = Math.floor(skipCooldownRemaining / 60);
+            const seconds = skipCooldownRemaining % 60;
+            skipBtn.innerText = `⏳ ПРОПУСК (${minutes}:${seconds.toString().padStart(2,'0')})`;
+        } else {
+            skipBtn.innerText = `⏩ ПРОПУСК УРОВНЯ`;
+        }
+    }
+
+    function skipCurrentLevel() {
+        if (skipButtonDisabled || skipCooldownRemaining > 0) {
+            messageBox.innerHTML = `⛔ Пропусктан кийин 3 мүнөт күтүш керек! (КД активдүү)`;
+            return;
+        }
+        if (currentLevelIdx + 1 >= LEVELS_DATA.length) {
+            if (currentLevelIdx === LEVELS_DATA.length - 1) {
+                messageBox.innerHTML = "Бул акыркы деңгээл, пропуск мүмкүн эмес! Аны аяктаңыз.";
+                return;
+            }
+        }
+        currentLevelIdx++;
+        loadLevel(currentLevelIdx);
+        startSkipCooldown();
+        messageBox.innerHTML = "⏩ ДЕҢГЭЭЛ ПРОПУЩЕН! Кийинки деңгээл. КД 3 мүнөт.";
+    }
+
+    function initGame() {
+        loadLevel(0);
+        submitBtn.addEventListener("click", () => attemptAddWord());
+        nextLevelBtn.addEventListener("click", () => goToNextLevel());
+        skipBtn.addEventListener("click", () => skipCurrentLevel());
+        answerInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                attemptAddWord();
+            }
         });
-    });
+        skipCooldownRemaining = 0;
+        skipButtonDisabled = false;
+        skipBtn.disabled = false;
+        updateSkipButtonText();
+    }
+
+    initGame();
 </script>
 </body>
 </html>
