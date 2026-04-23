@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Сөздөн сөз – Кыргызча | Туура сөздөр гана | 30 деңгээл</title>
+    <title>Сөздөн сөз – Кыргызча | Очко системасы | 30 деңгээл</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
-            background: linear-gradient(145deg, #1e4b2e 0%, #0e3a22 100%);
-            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            background: #0a0a0a;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,31 +17,25 @@
             padding: 20px;
         }
         .game-container {
-            max-width: 750px;
+            max-width: 800px;
             width: 100%;
-            background: #fef5e0;
-            background-image: radial-gradient(circle at 10% 30%, rgba(255,245,200,0.4) 2%, transparent 2.2%);
-            background-size: 28px 28px;
-            border-radius: 72px 48px 72px 48px;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,200,0.9);
+            background: #121212;
+            border-radius: 48px;
             padding: 20px 24px 32px;
+            border: 1px solid #2a2a2a;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.6);
         }
         h1 {
             text-align: center;
             font-size: 1.9rem;
             margin: 0 0 8px;
-            color: #2c5a2e;
-            text-shadow: 3px 3px 0 #e9d6a3;
-            font-weight: 800;
+            color: #ffd700;
         }
         .sub {
             text-align: center;
-            font-style: italic;
-            color: #6b4c2c;
-            margin-top: -12px;
+            color: #888;
             margin-bottom: 20px;
-            font-weight: 500;
-            border-bottom: 1px dashed #c7a56b;
+            border-bottom: 1px dashed #333;
             display: inline-block;
             width: auto;
             margin-left: auto;
@@ -51,47 +43,56 @@
             padding-bottom: 6px;
         }
         .level-box {
-            background: #2a2418;
+            background: #1e1e1e;
             padding: 10px 16px;
             border-radius: 100px;
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            color: #ffefb9;
+            color: #ffd700;
             font-weight: bold;
             margin-bottom: 20px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 2px 3px rgba(255,215,140,0.3);
         }
         .level-num {
-            background: #efc27d;
-            color: #2d2b1f;
+            background: #ffd700;
+            color: #121212;
             padding: 5px 18px;
             border-radius: 40px;
-            font-size: 1.2rem;
+        }
+        .score-panel {
+            background: #1a1a1a;
+            padding: 10px 16px;
+            border-radius: 48px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #333;
+        }
+        .total-score {
+            color: #ffd700;
+            font-size: 1.3rem;
+            font-weight: bold;
         }
         .target-word {
-            background: #fff0cf;
+            background: #1a1a1a;
             text-align: center;
             font-size: 2.7rem;
             font-weight: 800;
             letter-spacing: 6px;
-            padding: 20px 12px;
+            padding: 20px;
             border-radius: 48px;
             margin: 15px 0;
-            color: #3b2a1f;
-            box-shadow: inset 0 0 0 3px white, 0 8px 18px rgba(0,0,0,0.2);
+            color: #ffd700;
             font-family: monospace;
             word-break: break-word;
         }
         .letters-hint {
-            background: #e7dbbc;
+            background: #1e1e1e;
             padding: 8px;
             text-align: center;
             border-radius: 50px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #3a2c1c;
+            color: #aaa;
             margin-bottom: 15px;
+            border: 1px solid #333;
         }
         .input-area {
             display: flex;
@@ -101,74 +102,68 @@
         }
         #answerInput {
             flex: 3;
-            padding: 14px 18px;
-            font-size: 1.2rem;
-            border: none;
+            padding: 14px;
             border-radius: 60px;
-            background: #fffff2;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05), 0 1px 2px #bc9a6b;
-            font-family: monospace;
-            font-weight: bold;
-            text-transform: uppercase;
+            background: #252525;
+            color: #ffd700;
+            border: 1px solid #444;
             text-align: center;
+            text-transform: uppercase;
+            font-size: 1.2rem;
         }
         #submitBtn {
             flex: 1;
-            background: #e09d32;
+            background: #ffd700;
             border: none;
             border-radius: 60px;
             font-weight: bold;
             font-size: 1.2rem;
-            color: #2a2412;
+            color: #121212;
             cursor: pointer;
-            box-shadow: 0 3px 0 #784e1a;
-            transition: 0.05s linear;
-        }
-        #submitBtn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #784e1a;
         }
         .score-stats {
             display: flex;
             justify-content: space-between;
-            background: #d9c48b;
+            background: #1e1e1e;
             padding: 8px 16px;
             border-radius: 40px;
-            margin: 15px 0 10px;
+            margin: 15px 0;
+            color: #ffd700;
             font-weight: bold;
         }
         .found-words {
-            background: #fcf3e0;
+            background: #161616;
             border-radius: 36px;
             padding: 12px 18px;
             min-height: 130px;
             max-height: 200px;
             overflow-y: auto;
-            margin: 15px 0 8px;
-            border: 1px solid #e2cba3;
+            border: 1px solid #333;
         }
         .found-words h3 {
-            margin: 0 0 8px 0;
+            margin: 0 0 8px;
+            color: #ffd700;
             font-size: 1rem;
-            color: #6a4318;
         }
         .word-badge {
             display: inline-block;
-            background: #e9cfa0;
+            background: #252525;
+            color: #ffd700;
             padding: 5px 12px;
             margin: 4px 6px 4px 0;
             border-radius: 32px;
             font-size: 0.85rem;
-            font-weight: 600;
+            border: 1px solid #444;
         }
         .message {
-            background: #3a2a1c;
-            color: #ffeaac;
+            background: #121212;
+            color: #ffd700;
             padding: 8px;
             border-radius: 40px;
             text-align: center;
             font-size: 0.85rem;
             margin-top: 12px;
+            border: 1px solid #333;
         }
         .action-buttons {
             display: flex;
@@ -183,30 +178,33 @@
             border: none;
             border-radius: 40px;
             cursor: pointer;
-            transition: 0.1s;
         }
-        .next-btn {
-            background: #568f3c;
-            color: white;
+        .next-btn { background: #1a5a1a; color: #ffd700; }
+        .skip-btn { background: #3a2a1a; color: #ffd700; }
+        .skip-btn:disabled { background: #2a1a0a; opacity: 0.6; cursor: not-allowed; }
+        footer { font-size: 0.7rem; text-align: center; margin-top: 20px; color: #555; }
+        .progress-bar {
+            background: #2a2a2a;
+            border-radius: 30px;
+            height: 12px;
+            margin: 10px 0;
+            overflow: hidden;
         }
-        .skip-btn {
-            background: #7a5a3a;
-            color: #ffefcf;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        .progress-fill {
+            background: #ffd700;
+            height: 100%;
+            width: 0%;
+            border-radius: 30px;
+            transition: width 0.3s ease;
         }
-        .skip-btn:disabled {
-            background: #4f3e2a;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        footer {
-            font-size: 0.7rem;
+        .level-reward {
+            font-size: 0.75rem;
+            color: #ffd700;
             text-align: center;
-            margin-top: 20px;
-            color: #af8f60;
+            margin-top: 8px;
         }
         @media (max-width: 550px) {
-            .target-word { font-size: 1.9rem; letter-spacing: 2px; }
+            .target-word { font-size: 1.8rem; letter-spacing: 2px; }
             .action-buttons { flex-direction: column; }
         }
     </style>
@@ -214,23 +212,32 @@
 <body>
 <div class="game-container">
     <h1>📖 СӨЗДӨН СӨЗ 🧩</h1>
-    <div style="text-align:center;"><span class="sub">Кыргызча оюн — 30 деңгээл (туура сөздөр гана)</span></div>
+    <div class="sub">Кыргызча оюн — 30 деңгээл (очко системасы)</div>
+
+    <div class="score-panel">
+        <span>🏆 ЖАЛПЫ БАЛЛ</span>
+        <span class="total-score" id="totalScore">0</span>
+    </div>
 
     <div class="level-box">
         <span>🏔️ ДЕҢГЭЭЛ</span>
         <span class="level-num" id="levelNum">1 / 30</span>
     </div>
-    <div class="target-word" id="targetWord">ЖҮРӨК</div>
-    <div class="letters-hint" id="lettersHint">🔤 Тамгалар: Ж, Ү, Р, Ө, К</div>
+    <div class="target-word" id="targetWord">ТАМАК</div>
+    <div class="letters-hint" id="lettersHint">🔤 Тамгалар: Т, А, М, А, К</div>
+    
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
 
     <div class="input-area">
-        <input type="text" id="answerInput" placeholder="Сөздү жаз (3+ тамга)" autocomplete="off" autofocus>
+        <input type="text" id="answerInput" placeholder="Сөздү жаз (2+ тамга)" autocomplete="off">
         <button id="submitBtn">🔍 ТЕКШЕРҮҮ</button>
     </div>
 
     <div class="score-stats">
-        <span>⭐ ТАПКАН: <span id="foundCount">0</span></span>
-        <span>🎯 МАКСАТ: <span id="needCount">3</span></span>
+        <span>⭐ ТАПКАН: <span id="foundCount">0</span> / <span id="totalCount">0</span></span>
+        <span>🎯 ДЕҢГЭЭЛДЕГИ БАЛЛ: <span id="levelScore">0</span></span>
     </div>
 
     <div class="found-words">
@@ -242,250 +249,260 @@
         <button id="nextLevelBtn" class="next-btn" style="display: none;">➡️ КИЙИНКИ ДЕҢГЭЭЛ</button>
         <button id="skipLevelBtn" class="skip-btn">⏩ ПРОПУСК (КД 3 мин)</button>
     </div>
-    <div id="messageBox" class="message">✨ Жаңы сөздөрдү түз!</div>
-    <footer>📜 Эреже: баштапкы сөздүн тамгаларынан гана. <strong style="color:#ffd966">Чыныгы кыргыз сөздөрү гана</strong> (алдын ала бекитилген).</footer>
+    <div id="messageBox" class="message">✨ 5 сөз тапсаңыз, кийинки деңгээлге өтөсүз! Ар бир кошумча сөзгө кошумча упай! ✨</div>
+    <div class="level-reward" id="levelReward"></div>
+    <footer>📜 Тамгаларды гана колдонуңуз. Минимум 5 сөз = өтүү. Ар бир кошумча сөзгө +5 упай!</footer>
 </div>
 
 <script>
-    // --------------------------------------------------------------
-    // 30 ДЕҢГЭЭЛ — АР БИРИНЕ ТУУРА СӨЗДӨРДҮН ТИЗМЕСИ (ИСПРАВЛЕННЫЙ)
-    // --------------------------------------------------------------
-    const LEVELS_DATA = [
-        { word: "ЖҮРӨК", need: 3, validWords: ["ЖҮР", "КӨР", "РӨК", "ЖӨР", "ҮРӨК"] },
-        { word: "БАЛАЛЫК", need: 4, validWords: ["БАЛА", "БАЛ", "АЛ", "ЛАК", "АЛЫС", "КАЛ", "КЫЛ", "БАЛЫК", "АК", "АЛА"] },
-        { word: "МЕКТЕП", need: 4, validWords: ["МЕК", "ТЕК", "КЕП", "ПЕК", "МЕТ", "КЕТ"] },
-        { word: "ЫРАСМАН", need: 4, validWords: ["ЫРАС", "МАН", "РАС", "АР", "САН", "ЫР", "АСМАН", "РАМА"] },
-        { word: "ТАБИГАТ", need: 5, validWords: ["ТАБИГАТ", "ТАБА", "БАТ", "АТА", "ТАГА", "ГИТ", "АБА", "ТАК", "ТАГЫ"] },
-        { word: "КҮНЧЫГЫШ", need: 5, validWords: ["КҮН", "ЧЫГЫШ", "КҮЧ", "ЫШ", "ГЫШ", "КҮНЧЫ", "ЫГЫШ"] },
-        { word: "АДАМКЕРЧИЛИК", need: 5, validWords: ["АДАМ", "КЕР", "ЧИЛ", "ДАМ", "КЕЛ", "АДАЛ", "ИЛИК", "КЕРЕК", "АДАМКЕР"] },
-        { word: "ЫЙЫКМАЧЫЛЫК", need: 5, validWords: ["ЫЙЫК", "МАЧЫ", "АЧЫК", "ЧАК", "ЫР", "КЫЛ", "ЫК", "АКЫЛ", "ЧЫК", "ЫСЫК"] },
-        { word: "МАМЛЕКЕТ", need: 5, validWords: ["МАМЛЕ", "МАМА", "КЕТ", "МЕКЕН", "АКЕ", "ТЕК", "ЛЕК", "МАЛ", "АК", "ЕЛ"] },
-        { word: "БИЛИМДҮҮЛҮК", need: 6, validWords: ["БИЛИМ", "БИЛ", "ИЛИМ", "ҮЛҮК", "ЛҮК", "КҮЛ", "МИЛ", "ДҮК"] },
-        { word: "КЫРГЫЗСТАН", need: 6, validWords: ["КЫРГЫЗ", "СТАН", "КЫЗ", "ТАН", "ГЫЗ", "ЗАН", "КЫР", "САН", "КАН", "АЗЫК"] },
-        { word: "ТАРБИЯ", need: 5, validWords: ["ТАР", "БИЯ", "АРБА", "ТАРА", "ИЯ", "БАР", "РАТ"] },
-        { word: "АКЫЛМАН", need: 5, validWords: ["АКЫЛ", "МАН", "АК", "КАН", "ЫЛАК", "АЛА", "ЛАН", "КАЛ", "ЫР", "АЛЫМ"] },
-        { word: "АЛТЫН", need: 4, validWords: ["АЛТЫН", "АЛ", "ТАН", "ЛАН", "ЫН", "АТ", "АНТ", "АЛТ"] },
-        { word: "КОНУМ", need: 4, validWords: ["КОН", "УМ", "КОНУМ", "НУМ", "КУМ", "УН", "КОНУ", "ОКУМ"] },
-        { word: "ЖАЗГЫЧЫЛЫК", need: 6, validWords: ["ЖАЗ", "ГЫЧ", "ЖАЗГЫЧ", "ЧЫЛЫК", "ЖАЗЫК", "АЗЫК", "КЫЛЫЧ", "ЧАК", "ЖАЛЫН", "ЫСЫК"] },
-        { word: "МУРАСТОО", need: 5, validWords: ["МУРАС", "СТОО", "МУР", "РАС", "ТОО", "АРА", "МАСТОО", "ТОСУУ", "САР", "УСТА"] },
-        { word: "ӨНӨРЛҮҮ", need: 5, validWords: ["ӨНӨР", "ӨР", "НӨР", "ЛҮҮ", "ӨН", "НӨРЛҮҮ"] },
-        { word: "КАРЫЛЫК", need: 5, validWords: ["КАР", "АРЫК", "ЫЛЫК", "АР", "РЫК", "КАРА", "ЛЫК", "КЫР", "КАРЫ", "ЫР"] },
-        { word: "БОТОНОЙ", need: 5, validWords: ["БОТО", "ТОНО", "БОЙ", "ОТОН", "ТОН", "НОЙ", "БОТ", "ОЙ", "ТОЙ"] },
-        { word: "ЖАРАТЫЛЫШ", need: 6, validWords: ["ЖАРА", "ТЫЛЫШ", "АРА", "ЖАР", "РАТ", "АТЫШ", "ЖАРЫК", "ТАРЫ", "ЫЛАЙ", "ШЫЛЫК"] },
-        { word: "ТАМГА", need: 4, validWords: ["ТАМ", "ГА", "ТАМГА", "АГА", "МАГА", "ТАГА", "АМА", "ГАМ"] },
-        { word: "ЭРКИНДИК", need: 5, validWords: ["ЭРК", "КИН", "ЭРКИН", "ДИК", "КИНДИК", "ИН", "РЭК", "ДЭЭР", "НЭР", "КИРЕ"] },
-        { word: "ЫРЧЫЛЫК", need: 5, validWords: ["ЫР", "ЧЫЛЫК", "ЫРЧЫ", "КЫЛ", "РЫК", "ЫРК", "ЧЫК", "ЫЛЫК", "ЧЫР", "КЫР"] },
-        { word: "БИЛЕМИ", need: 5, validWords: ["БИЛ", "ИЛЕ", "БИЛЕ", "МИЛ", "ЛЕМИ", "ИМ", "БИ", "ЛИМ", "ЕМИ"] },
-        { word: "КӨРКӨМ", need: 4, validWords: ["КӨР", "КӨРК", "РКӨ", "МӨК", "КӨМ", "ӨК"] },
-        { word: "САЛТТУУЛУК", need: 6, validWords: ["САЛТ", "ТУУЛУК", "АЛТУУ", "САЛ", "ТУУ", "ЛУК", "УК", "АЛТ", "ТАС", "САЛКЫН"] },
-        { word: "МААНИЛҮҮ", need: 5, validWords: ["МААН", "НИЛ", "ААНИ", "МААНИ", "ЛҮҮ", "МАНИ", "ИЛҮҮ", "АН", "МАА", "НИЛҮҮ"] },
-        { word: "НУРЛУУ", need: 4, validWords: ["НУР", "ЛУУ", "УЛУ", "РУЛ", "ЛУН", "УРУН", "УР", "НУ"] },
-        { word: "ТИЛЕК", need: 4, validWords: ["ТИЛ", "ЛЕК", "ИЛЕК", "ТИК", "ЕК", "КЕЛ", "ЛЕТ", "ИЛ", "КИЛ"] }
-    ];
+    // ============================================================
+    // 30 ДЕҢГЭЭЛ - АР БИР СӨЗГӨ МҮМКҮН БОЛГОН БАРДЫК СӘЗДӘР (2+ ТАМГА)
+    // ============================================================
+    
+    const LEVELS_DATA = {
+        "ТАМАК": { words: ["АК", "АКТ", "АМ", "АМАК", "АТ", "АТА", "КА", "КАМА", "КАТА", "КТ", "МА", "МАК", "МАКА", "МАКТА", "МАМА", "ТА", "ТАК", "ТАКА", "ТАМ", "ТАМА"] },
+        "БАЛАЛЫК": { words: ["АК", "АЛ", "АЛА", "АЛЫ", "АЛЫК", "АЛЫС", "БА", "БАК", "БАЛ", "БАЛА", "БАЛКЫ", "БАЛЫК", "КА", "КАЛ", "КЫ", "КЫЛ", "КЫЛА", "ЛА", "ЛАК", "ЛЫ", "ЫК", "ЫЛ", "ЫЛА"] },
+        "МЕКТЕП": { words: ["ЕК", "ЕТ", "КЕ", "КЕМЕ", "КЕП", "КЕТ", "КТ", "МЕ", "МЕК", "МЕКЕ", "МЕТ", "ПЕ", "ПЕК", "ПЕТ", "ТЕ", "ТЕК", "ТЕМП", "ТП", "ТЕП"] },
+        "ЫРАСМАН": { words: ["АН", "АНЫ", "АР", "АРС", "АСМАН", "МА", "МАН", "МАРА", "МАС", "МЫ", "НАР", "РА", "РАМА", "РАН", "РАС", "СА", "САМ", "САН", "САР", "ЫР", "ЫРАС"] },
+        "ТАБИГАТ": { words: ["АА", "АБА", "АК", "АКЫ", "АТ", "АТА", "БА", "БАА", "БАГ", "БАТ", "БИТ", "ГА", "ГАТА", "ГИТ", "ИТ", "КИТА", "ТА", "ТАБ", "ТАБА", "ТАГА", "ТАГЫ", "ТАК"] },
+        "КҮНЧЫГЫШ": { words: ["ГЫ", "ГЫЧ", "ГЫШ", "КҮ", "КҮН", "КҮНЧЫ", "КҮЧ", "КЫЧ", "НЧ", "ҮН", "ҮЧ", "ЧЫ", "ЧЫГЫШ", "ЧЫН", "ЫГЫШ", "ЫК", "ЫШ"] },
+        "АДАМКЕРЧИЛИК": { words: ["АДАЛ", "АДАМ", "АДАМКЕР", "АК", "АКЫЛ", "АЛ", "АР", "ДА", "ДАМ", "ДИ", "ЕК", "ЕЛ", "ИК", "ИЛИК", "ИР", "КА", "КЕ", "КЕЛ", "КЕР", "КЕРЕК", "КИ", "КИЛ", "КИР", "ЛИК", "МА", "МАК", "МИ", "РА", "РИ", "ЧИ", "ЧИЛ", "ЧЫК", "ЫК"] },
+        "ЫЙЫКМАЧЫЛЫК": { words: ["АК", "АКЫЛ", "АЛ", "АЧ", "АЧЫК", "ЙЫ", "КА", "КЫ", "КЫЛ", "КЫЧ", "МА", "МАК", "МАЧЫ", "РЫ", "ЧАК", "ЧЫ", "ЧЫК", "ЧЫР", "ЫЙ", "ЫЙЫК", "ЫК", "ЫЛ", "ЫЛАК", "ЫР", "ЫРК", "ЫСЫК"] },
+        "МАМЛЕКЕТ": { words: ["АК", "АКЕ", "АМ", "АМА", "АТ", "ЕК", "ЕЛ", "ЕТ", "КА", "КЕ", "КЕТ", "ЛЕ", "ЛЕК", "МА", "МАК", "МАЛ", "МАМ", "МАМА", "МАМЛЕ", "МЕК", "МЕКЕН", "ТЕ", "ТЕК", "ТК"] },
+        "БИЛИМДҮҮЛҮК": { words: ["БИ", "БИЛ", "БИЛИМ", "БӨЛ", "ДҮ", "ДҮК", "ИЛ", "ИЛИМ", "ИМ", "КӨЛ", "КҮЛ", "ЛИ", "ЛҮ", "ЛҮК", "МИ", "МИЛ", "МҮ", "ӨЛ", "ТИ", "ҮЛ", "ҮЛҮК"] },
+        "КЫРГЫЗСТАН": { words: ["АЗЫК", "АН", "АРАН", "АР", "ГЫ", "ГЫЗ", "ЗА", "ЗАН", "КА", "КАН", "КЫ", "КЫЗ", "КЫР", "КЫРГЫЗ", "НА", "НАР", "НЫР", "РЫ", "РЫК", "СА", "САН", "СТ", "СТАН", "СЫР", "ТА", "ТАН", "ТАНЫ", "ЫР"] },
+        "ТАРБИЯ": { words: ["АА", "АКЫ", "АР", "АРБА", "БА", "БАР", "БИ", "БИЯ", "ИЯ", "КЫ", "РА", "РАТ", "РЫБ", "ТА", "ТАБ", "ТАР", "ТАРА", "ЫР", "ЯК"] },
+        "АКЫЛМАН": { words: ["АК", "АКЫ", "АКЫЛ", "АЛ", "АЛА", "АЛЫМ", "АН", "АР", "КА", "КАЛ", "КАН", "КЫ", "ЛАН", "ЛА", "ЛЫ", "МА", "МАН", "НА", "ЫК", "ЫЛАК", "ЫЛ", "ЫМ", "ЫР"] },
+        "АЛТЫН": { words: ["АК", "АЛ", "АЛА", "АЛТ", "АЛТЫН", "АН", "АНТ", "АРЫ", "АТ", "АТА", "КЫ", "ЛАН", "НАТ", "НТ", "ТАН", "ТЫ", "ТЫН", "ЫН", "ЫР"] },
+        "КОНУМ": { words: ["КМ", "КО", "КОН", "КОНУ", "КОНУМ", "КУМ", "МК", "МУ", "НМ", "НУ", "НУМ", "ОК", "ОКУМ", "ОН", "УК", "УМ", "УН"] },
+        "ЖАЗГЫЧЫЛЫК": { words: ["АЗЫК", "АК", "АКЫЛ", "ГЫ", "ГЫЧ", "ЖА", "ЖАЗ", "ЖАЗГЫЧ", "ЖАЗЫК", "ЖАЛ", "ЖАЛЫН", "ЗЫ", "ЗЫК", "КЫ", "КЫЛ", "КЫЛЫЧ", "ЛАК", "ЛЫ", "ЧАК", "ЧЫ", "ЧЫЛЫК", "ЫК", "ЫСЫК", "ҮЧ", "ҮЧҮК"] },
+        "МУРАСТОО": { words: ["АР", "АРА", "МА", "МАСТОО", "МУ", "МУР", "МУРАС", "РА", "РАС", "РУС", "СА", "САМ", "САР", "СО", "СООТ", "СТ", "СТОО", "ТО", "ТОО", "ТОСУУ", "УРА", "УС", "УСТА"] },
+        "ӨНӨРЛҮҮ": { words: ["КӨР", "ЛҮ", "ЛҮҮ", "ЛӨР", "НӨ", "НӨЛ", "НӨР", "НӨРЛҮҮ", "РЛ", "РЛҮ", "РӨ", "РӨК", "Ө", "ӨК", "ӨЛ", "ӨЛҮ", "ӨН", "ӨНӨР", "ӨР", "ӨРК", "ҮР"] },
+        "КАРЫЛЫК": { words: ["АК", "АКЫР", "АР", "АРЫ", "АРЫК", "КА", "КАЛЫ", "КАР", "КАРА", "КАРЫ", "КЫ", "КЫЛ", "КЫР", "ЛА", "ЛЫ", "ЛЫК", "РЫ", "РЫК", "ЫЛЫК", "ЫР"] },
+        "БОТОНОЙ": { words: ["БО", "БОЙ", "БОТ", "БОТО", "БТ", "ЙД", "НО", "НОЙ", "ОБ", "ОЙ", "ОН", "ОТ", "ОТОН", "ТН", "ТО", "ТОЙ", "ТОН", "ТОНО"] },
+        "ЖАРАТЫЛЫШ": { words: ["АРА", "АР", "АРЫ", "АРЫШ", "АТ", "АТЫШ", "АШ", "ЖА", "ЖАР", "ЖАРА", "ЖАРЫК", "ЖЫЛ", "ЛА", "ЛЫ", "ЛЫШ", "РА", "РАТ", "РЫ", "ТАРЫ", "ТЫ", "ТЫЛЫШ", "ШЫ", "ШЫЛЫК", "ЫЛ", "ЫЛАЙ"] },
+        "ТАМГА": { words: ["АГ", "АГА", "АГАМ", "АК", "АКТА", "АМ", "АМА", "АТ", "ГА", "ГАМ", "ГАТА", "КА", "КАГА", "КГ", "КТ", "МА", "МАГА", "МГ", "ТА", "ТАГА", "ТАМ", "ТАМГА", "ТМ"] },
+        "ЭРКИНДИК": { words: ["ДИ", "ДИК", "ДИН", "ЕК", "ЕН", "ИН", "ИР", "ИРК", "КЕ", "КЕН", "КИ", "КИН", "КИНДИК", "КИР", "КИРЕ", "КН", "КР", "НД", "НДК", "НЭР", "РК", "РЭК", "ЭК", "ЭН", "ЭР", "ЭРК", "ЭРКИН"] },
+        "ЫРЧЫЛЫК": { words: ["КЫ", "КЫЛ", "КЫР", "ЛЫ", "РЫ", "РЫК", "РЫЧ", "ЧЫ", "ЧЫК", "ЧЫЛ", "ЧЫЛЫК", "ЧЫР", "ЫК", "ЫЛ", "ЫЛЫК", "ЫР", "ЫРК", "ЫРЧЫ"] },
+        "БИЛЕМИ": { words: ["БЕ", "БЕЛ", "БИ", "БИЛ", "БИЛЕ", "БИЛЕМ", "БИЛЕМИ", "БИМ", "ЕК", "ЕМ", "ЕМИ", "ИЛ", "ИЛЕ", "ИЛЕК", "ИЛЕМ", "ИМ", "КЕ", "КИ", "ЛЕ", "ЛЕК", "ЛЕМ", "ЛЕМИ", "ЛИ", "ЛИМ", "МЕ", "МИ", "МИЛ", "МИЛЕ"] },
+        "КӨРКӨМ": { words: ["КМ", "КӨ", "КӨМ", "КӨР", "КӨРК", "КӨРӨ", "МК", "МӨ", "МӨК", "РК", "РКӨ", "РӨ", "РӨК", "ӨК", "ӨР", "ӨРК", "ӨРӨ", "ӨТ"] },
+        "САЛТТУУЛУК": { words: ["АК", "АКЫЛ", "АЛ", "АЛТ", "АЛТУУ", "АЛТУУЛ", "КЫ", "ЛА", "ЛУ", "ЛУК", "СА", "САЛ", "САЛКЫН", "САЛТ", "ТА", "ТАС", "ТУ", "ТУУ", "ТУУЛУК", "ТУЛ", "ТУЛУК", "УК", "УЛ", "УЛА", "УЛАН", "УЛУ", "УЛУК"] },
+        "МААНИЛҮҮ": { words: ["АА", "ААНИ", "АК", "АЛҮҮ", "АН", "АНИ", "ИЛ", "ИЛҮҮ", "ЛҮ", "ЛҮҮ", "МА", "МАА", "МААНИ", "МААН", "МАН", "МАНИ", "МК", "НИ", "НИЛ", "НИЛЕ", "НИЛҮҮ", "НӨ", "ӨЛ", "ҮЛ", "ҮН"] },
+        "НУРЛУУ": { words: ["ЛУ", "ЛУН", "ЛУУ", "ЛӨ", "НЛ", "НР", "НУ", "НУР", "НУРУ", "НӨ", "РЛ", "РУ", "РУЛ", "УЛ", "УЛАН", "УЛУ", "УН", "УР", "УРУН", "ӨЛ"] },
+        "ТИЛЕК": { words: ["ЕК", "ЕЛ", "ИК", "ИЛ", "ИЛЕ", "ИЛЕК", "ИТ", "КЕ", "КЕЛ", "КИ", "КИЛ", "КИЛЕ", "КИТ", "ЛЕ", "ЛЕК", "ЛЕКЕ", "ЛЕТ", "ЛИ", "ЛИТ", "ЛИТР", "ТЕ", "ТЕК", "ТИ", "ТИК", "ТИЛ", "ТК", "ТЛ"] }
+    };
 
-    // ----------------------------------- ОЮНДУН АБАЛЫ -----------------------------------
-    let currentLevelIdx = 0;
-    let currentLevel = null;
+    // ========== ОЮНДУН АБАЛЫ ==========
+    let currentLevelIndex = 0;
+    let currentWord = "";
+    let allWordsList = [];
     let foundWords = new Set();
-    let skipCooldownRemaining = 0;
-    let skipTimerInterval = null;
-    let skipButtonDisabled = false;
+    let totalScore = 0;
+    let currentLevelScore = 0;
+    let skipCooldown = 0;
+    let skipTimer = null;
+    let skipActive = false;
 
-    const targetWordEl = document.getElementById("targetWord");
-    const lettersHintEl = document.getElementById("lettersHint");
-    const levelNumSpan = document.getElementById("levelNum");
-    const foundCountSpan = document.getElementById("foundCount");
-    const needCountSpan = document.getElementById("needCount");
-    const foundListDiv = document.getElementById("foundList");
-    const answerInput = document.getElementById("answerInput");
-    const submitBtn = document.getElementById("submitBtn");
-    const nextLevelBtn = document.getElementById("nextLevelBtn");
-    const skipBtn = document.getElementById("skipLevelBtn");
-    const messageBox = document.getElementById("messageBox");
+    const LEVELS_LIST = Object.keys(LEVELS_DATA);
+    const PASS_MINIMUM = 5;  // Минимум 5 слов для перехода
 
-    function normalizeWord(word) {
-        return word.trim().toUpperCase();
-    }
-
-    function canFormFromBase(candidate, baseWord) {
-        let baseInventory = new Map();
-        for (let ch of baseWord) {
-            baseInventory.set(ch, (baseInventory.get(ch) || 0) + 1);
-        }
-        let inv = new Map();
-        for (let [ch, cnt] of baseInventory.entries()) inv.set(ch, cnt);
-        for (let ch of candidate) {
-            if (!inv.has(ch) || inv.get(ch) === 0) return false;
-            inv.set(ch, inv.get(ch) - 1);
-        }
-        return true;
-    }
-
-    function isValidWord(candidate, levelData, alreadyFound) {
-        const cand = normalizeWord(candidate);
-        if (cand.length < 3) return false;
-        if (cand === levelData.word) return false;
-        if (alreadyFound.has(cand)) return false;
+    function updateProgress() {
+        let total = allWordsList.length;
+        let found = foundWords.size;
+        let percent = total > 0 ? Math.floor((found / total) * 100) : 0;
         
-        const validWordsList = levelData.validWords.map(w => normalizeWord(w));
-        if (!validWordsList.includes(cand)) return false;
-        if (!canFormFromBase(cand, levelData.word)) return false;
+        document.getElementById("foundCount").innerHTML = found;
+        document.getElementById("totalCount").innerHTML = total;
+        document.getElementById("progressFill").style.width = percent + "%";
+        document.getElementById("levelScore").innerHTML = currentLevelScore;
+        document.getElementById("totalScore").innerHTML = totalScore;
         
-        return true;
-    }
-
-    function updateUI() {
-        foundCountSpan.innerText = foundWords.size;
-        if (foundWords.size === 0) {
-            foundListDiv.innerHTML = "—";
-        } else {
-            const sorted = Array.from(foundWords).sort();
-            const badges = sorted.map(w => `<span class="word-badge">${w}</span>`).join('');
-            foundListDiv.innerHTML = badges;
-        }
-        
-        if (foundWords.size >= currentLevel.need) {
-            nextLevelBtn.style.display = "block";
-            messageBox.innerHTML = "🎉 МАКСАТКА ЖЕТТИҢИЗ! Кийинки деңгээлге өтүңүз! 🎉";
-        } else {
-            nextLevelBtn.style.display = "none";
-            if (!messageBox.innerHTML.includes("Пропуск")) 
-                messageBox.innerHTML = "✨ Туура сөздөрдү табыңыз ✨";
-        }
-    }
-
-    function loadLevel(levelIndex) {
-        if (levelIndex >= LEVELS_DATA.length) {
-            targetWordEl.innerText = "ЖЕҢИШ!";
-            lettersHintEl.innerText = "🏆 БАРДЫК 30 ДЕҢГЭЭЛ АЯКТАЛДЫ 🏆";
-            answerInput.disabled = true;
-            submitBtn.disabled = true;
-            nextLevelBtn.style.display = "none";
-            skipBtn.style.display = "none";
-            messageBox.innerHTML = "КУТТУКТАЙБЫЗ! Сиз улуу оюнчу болдуңуз!";
-            return;
-        }
-        
-        currentLevel = LEVELS_DATA[levelIndex];
-        foundWords.clear();
-        
-        targetWordEl.innerText = currentLevel.word;
-        const lettersArray = [...currentLevel.word].join(', ');
-        lettersHintEl.innerText = `🔤 Тамгалар: ${lettersArray}`;
-        levelNumSpan.innerText = `${levelIndex+1} / ${LEVELS_DATA.length}`;
-        needCountSpan.innerText = currentLevel.need;
-        answerInput.disabled = false;
-        submitBtn.disabled = false;
-        answerInput.value = "";
-        answerInput.focus();
-        updateUI();
-        messageBox.innerHTML = `📖 ${currentLevel.word} — ${currentLevel.need} сөз табыңыз.`;
-        nextLevelBtn.style.display = "none";
-    }
-
-    function attemptAddWord() {
-        const raw = answerInput.value.trim();
-        if (raw === "") {
-            messageBox.innerHTML = "⚠️ Сөздү жазыңыз!";
-            answerInput.value = "";
-            answerInput.focus();
-            return;
-        }
-        const candidate = normalizeWord(raw);
-        if (!isValidWord(candidate, currentLevel, foundWords)) {
-            const validList = currentLevel.validWords.map(w => normalizeWord(w)).join(", ");
-            messageBox.innerHTML = `❌ "${candidate}" — уруксат берилген сөздөрдүн ичинде жок! (${validList})`;
-            answerInput.value = "";
-            answerInput.focus();
-            return;
-        }
-        
-        foundWords.add(candidate);
-        messageBox.innerHTML = `✅ " ${candidate} " туура! +1 сөз!`;
-        answerInput.value = "";
-        updateUI();
-        answerInput.focus();
-    }
-
-    function goToNextLevel() {
-        if (foundWords.size >= currentLevel.need) {
-            currentLevelIdx++;
-            loadLevel(currentLevelIdx);
-        } else {
-            messageBox.innerHTML = `⛔ Дагы ${currentLevel.need - foundWords.size} сөз табышыңыз керек!`;
-        }
-    }
-
-    function startSkipCooldown() {
-        if (skipTimerInterval) clearInterval(skipTimerInterval);
-        skipCooldownRemaining = 180;
-        skipButtonDisabled = true;
-        skipBtn.disabled = true;
-        updateSkipButtonText();
-
-        skipTimerInterval = setInterval(() => {
-            if (skipCooldownRemaining <= 1) {
-                clearInterval(skipTimerInterval);
-                skipTimerInterval = null;
-                skipButtonDisabled = false;
-                skipBtn.disabled = false;
-                updateSkipButtonText();
-                messageBox.innerHTML = "⏰ Пропуск кайра жеткиликтүү! (КД бүттү)";
-                setTimeout(() => {
-                    if (messageBox.innerHTML.includes("жеткиликтүү")) messageBox.innerHTML = "✨ Оюн уланууда ✨";
-                }, 2000);
+        // Проверка на переход (минимум 5 слов)
+        if (found >= PASS_MINIMUM) {
+            document.getElementById("nextLevelBtn").style.display = "block";
+            let bonus = found - PASS_MINIMUM;
+            if (bonus > 0) {
+                document.getElementById("levelReward").innerHTML = `🎁 Кошумча ${bonus} сөз таптыңыз! +${bonus * 5} упай бонус!`;
             } else {
-                skipCooldownRemaining--;
-                updateSkipButtonText();
+                document.getElementById("levelReward").innerHTML = `✅ 5 сөз табылды. Кийинки деңгээлге өтсөңүз болот!`;
+            }
+            if (found === total) {
+                document.getElementById("messageBox").innerHTML = "🎉 БАРДЫК СӨЗДӨР ТАБЫЛДЫ! Мыкты иш! 🎉";
+            }
+        } else {
+            document.getElementById("nextLevelBtn").style.display = "none";
+            let need = PASS_MINIMUM - found;
+            document.getElementById("levelReward").innerHTML = `📌 Дагы ${need} сөз табыңыз (минималдуу 5 сөз керек)`;
+        }
+    }
+
+    function calculateLevelBonus() {
+        let found = foundWords.size;
+        if (found < PASS_MINIMUM) return 0;
+        // Базалык упай: 10 упай + ар бир кошумча сөзгө 5 упай
+        let bonus = 10 + (found - PASS_MINIMUM) * 5;
+        return bonus;
+    }
+
+    function finishLevel() {
+        if (foundWords.size >= PASS_MINIMUM) {
+            let levelBonus = calculateLevelBonus();
+            currentLevelScore = levelBonus;
+            totalScore += levelBonus;
+            updateProgress();
+            document.getElementById("messageBox").innerHTML = `✨ Деңгээл аяктады! Сиз ${levelBonus} упай алдыңыз! (минималдуу 5 сөз + кошумча) ✨`;
+        }
+    }
+
+    function loadLevel(index) {
+        if (index >= LEVELS_LIST.length) {
+            document.getElementById("targetWord").innerText = "ЖЕҢИШ!";
+            document.getElementById("lettersHint").innerHTML = "🏆 БАРДЫК 30 ДЕҢГЭЭЛ АЯКТАЛДЫ 🏆";
+            document.getElementById("answerInput").disabled = true;
+            document.getElementById("submitBtn").disabled = true;
+            document.getElementById("progressFill").style.width = "100%";
+            document.getElementById("totalScore").innerHTML = totalScore;
+            document.getElementById("messageBox").innerHTML = `🏆 ОЮН БҮТТҮ! Жалпы упайыңыз: ${totalScore} 🏆`;
+            return;
+        }
+        
+        currentWord = LEVELS_LIST[index];
+        allWordsList = [...LEVELS_DATA[currentWord].words];
+        foundWords.clear();
+        currentLevelScore = 0;
+        
+        document.getElementById("targetWord").innerText = currentWord;
+        document.getElementById("lettersHint").innerHTML = `🔤 Тамгалар: ${[...currentWord].join(', ')}`;
+        document.getElementById("levelNum").innerHTML = `${index+1} / ${LEVELS_LIST.length}`;
+        document.getElementById("foundList").innerHTML = "—";
+        document.getElementById("answerInput").disabled = false;
+        document.getElementById("submitBtn").disabled = false;
+        document.getElementById("answerInput").value = "";
+        document.getElementById("answerInput").focus();
+        document.getElementById("messageBox").innerHTML = `📖 "${currentWord}" — ${PASS_MINIMUM} сөз тапсаңыз өтөсүз! (бардыгы ${allWordsList.length} сөз бар)`;
+        document.getElementById("levelReward").innerHTML = `🎯 Ар бир кошумча сөзгө +5 упай!`;
+        
+        updateProgress();
+    }
+
+    function checkWord() {
+        let input = document.getElementById("answerInput").value.trim().toUpperCase();
+        if (input === "") {
+            document.getElementById("messageBox").innerHTML = "⚠️ Сөздү жазыңыз!";
+            return;
+        }
+        if (input.length < 2) {
+            document.getElementById("messageBox").innerHTML = `❌ "${input}" — 2 тамгадан кем!`;
+            document.getElementById("answerInput").value = "";
+            return;
+        }
+        if (input === currentWord) {
+            document.getElementById("messageBox").innerHTML = `❌ "${input}" — баштапкы сөздүн өзү!`;
+            document.getElementById("answerInput").value = "";
+            return;
+        }
+        if (foundWords.has(input)) {
+            document.getElementById("messageBox").innerHTML = `❌ "${input}" — мурун табылган!`;
+            document.getElementById("answerInput").value = "";
+            return;
+        }
+        if (!LEVELS_DATA[currentWord].words.includes(input)) {
+            document.getElementById("messageBox").innerHTML = `❌ "${input}" — бул сөздү түзүүгө болбойт!`;
+            document.getElementById("answerInput").value = "";
+            return;
+        }
+        
+        foundWords.add(input);
+        document.getElementById("messageBox").innerHTML = `✅ "${input}" туура! +1 сөз!`;
+        document.getElementById("answerInput").value = "";
+        
+        let sorted = Array.from(foundWords).sort();
+        let badges = sorted.map(w => `<span class="word-badge">${w}</span>`).join('');
+        document.getElementById("foundList").innerHTML = badges;
+        
+        updateProgress();
+        
+        // Если нашли все слова, сразу считаем бонус
+        if (foundWords.size === allWordsList.length) {
+            finishLevel();
+        }
+        
+        document.getElementById("answerInput").focus();
+    }
+
+    function nextLevel() {
+        if (foundWords.size >= PASS_MINIMUM) {
+            // Вычисляем бонус за этот уровень перед переходом
+            let levelBonus = calculateLevelBonus();
+            if (currentLevelScore === 0) {
+                currentLevelScore = levelBonus;
+                totalScore += levelBonus;
+                updateProgress();
+                document.getElementById("messageBox").innerHTML = `✨ ${levelBonus} упай алдыңыз! (${foundWords.size} сөз табылды) ✨`;
+            }
+            currentLevelIndex++;
+            loadLevel(currentLevelIndex);
+        } else {
+            let need = PASS_MINIMUM - foundWords.size;
+            document.getElementById("messageBox").innerHTML = `⛔ Дагы ${need} сөз табышыңыз керек! (минималдуу ${PASS_MINIMUM} сөз керек)`;
+        }
+    }
+
+    function updateSkipButton() {
+        let btn = document.getElementById("skipLevelBtn");
+        if (skipActive && skipCooldown > 0) {
+            let mins = Math.floor(skipCooldown / 60);
+            let secs = skipCooldown % 60;
+            btn.innerHTML = `⏳ ПРОПУСК (${mins}:${secs.toString().padStart(2,'0')})`;
+            btn.disabled = true;
+        } else {
+            btn.innerHTML = `⏩ ПРОПУСК УРОВНЯ`;
+            btn.disabled = false;
+            skipActive = false;
+        }
+    }
+
+    function skipLevel() {
+        if (skipActive || skipCooldown > 0) {
+            document.getElementById("messageBox").innerHTML = `⛔ Пропусктан кийин 3 мүнөт күтүш керек!`;
+            return;
+        }
+        if (currentLevelIndex + 1 >= LEVELS_LIST.length) {
+            document.getElementById("messageBox").innerHTML = `⛔ Бул акыркы деңгээл, пропуск мүмкүн эмес!`;
+            return;
+        }
+        
+        // Пропуск - упай бербейт
+        currentLevelIndex++;
+        loadLevel(currentLevelIndex);
+        
+        skipActive = true;
+        skipCooldown = 180;
+        updateSkipButton();
+        
+        if (skipTimer) clearInterval(skipTimer);
+        skipTimer = setInterval(() => {
+            if (skipCooldown <= 1) {
+                clearInterval(skipTimer);
+                skipActive = false;
+                skipCooldown = 0;
+                updateSkipButton();
+                document.getElementById("messageBox").innerHTML = "⏰ Пропуск кайра жеткиликтүү!";
+            } else {
+                skipCooldown--;
+                updateSkipButton();
             }
         }, 1000);
+        
+        document.getElementById("messageBox").innerHTML = "⏩ ДЕҢГЭЭЛ ПРОПУЩЕН! КД 3 мүнөт. (упай берилбейт)";
     }
 
-    function updateSkipButtonText() {
-        if (skipButtonDisabled && skipCooldownRemaining > 0) {
-            const minutes = Math.floor(skipCooldownRemaining / 60);
-            const seconds = skipCooldownRemaining % 60;
-            skipBtn.innerText = `⏳ ПРОПУСК (${minutes}:${seconds.toString().padStart(2,'0')})`;
-        } else {
-            skipBtn.innerText = `⏩ ПРОПУСК УРОВНЯ`;
-        }
-    }
-
-    function skipCurrentLevel() {
-        if (skipButtonDisabled || skipCooldownRemaining > 0) {
-            messageBox.innerHTML = `⛔ Пропусктан кийин 3 мүнөт күтүш керек! (КД активдүү)`;
-            return;
-        }
-        if (currentLevelIdx + 1 >= LEVELS_DATA.length) {
-            if (currentLevelIdx === LEVELS_DATA.length - 1) {
-                messageBox.innerHTML = "Бул акыркы деңгээл, пропуск мүмкүн эмес! Аны аяктаңыз.";
-                return;
-            }
-        }
-        currentLevelIdx++;
-        loadLevel(currentLevelIdx);
-        startSkipCooldown();
-        messageBox.innerHTML = "⏩ ДЕҢГЭЭЛ ПРОПУЩЕН! Кийинки деңгээл. КД 3 мүнөт.";
-    }
-
-    function initGame() {
-        loadLevel(0);
-        submitBtn.addEventListener("click", () => attemptAddWord());
-        nextLevelBtn.addEventListener("click", () => goToNextLevel());
-        skipBtn.addEventListener("click", () => skipCurrentLevel());
-        answerInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                attemptAddWord();
-            }
-        });
-        skipCooldownRemaining = 0;
-        skipButtonDisabled = false;
-        skipBtn.disabled = false;
-        updateSkipButtonText();
-    }
-
-    initGame();
+    document.getElementById("submitBtn").onclick = checkWord;
+    document.getElementById("nextLevelBtn").onclick = nextLevel;
+    document.getElementById("skipLevelBtn").onclick = skipLevel;
+    document.getElementById("answerInput").onkeypress = (e) => { if (e.key === "Enter") checkWord(); };
+    
+    loadLevel(0);
 </script>
 </body>
 </html>
