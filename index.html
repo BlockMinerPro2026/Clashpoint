@@ -2,507 +2,468 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Сөздөн сөз – Кыргызча | Очко системасы | 30 деңгээл</title>
+    <title>Осколки надежды</title>
     <style>
-        * { box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #0a0a0a;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 20px;
         }
-        .game-container {
-            max-width: 800px;
+        .game {
+            max-width: 1000px;
             width: 100%;
-            background: #121212;
-            border-radius: 48px;
-            padding: 20px 24px 32px;
-            border: 1px solid #2a2a2a;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.6);
+            background: #07070c;
+            border: 2px solid #2a2a35;
+            border-radius: 28px;
+            padding: 25px;
         }
-        h1 {
-            text-align: center;
-            font-size: 1.9rem;
-            margin: 0 0 8px;
-            color: #ffd700;
-        }
-        .sub {
-            text-align: center;
-            color: #888;
-            margin-bottom: 20px;
-            border-bottom: 1px dashed #333;
-            display: inline-block;
-            width: auto;
-            margin-left: auto;
-            margin-right: auto;
-            padding-bottom: 6px;
-        }
-        .level-box {
-            background: #1e1e1e;
-            padding: 10px 16px;
-            border-radius: 100px;
+        .game-header {
             display: flex;
             justify-content: space-between;
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 20px;
+            align-items: baseline;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .level-num {
-            background: #ffd700;
-            color: #121212;
-            padding: 5px 18px;
+        .title { color: #8a7aaa; font-size: 14px; letter-spacing: 2px; }
+        .stats { color: #6a6a8a; font-size: 12px; }
+        .scene {
+            background: #0c0c12;
+            border: 2px solid #2c2c3a;
+            border-radius: 20px;
+            padding: 28px;
+            min-height: 280px;
+            color: #e0e0ec;
+            font-size: 18px;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            max-height: 380px;
+        }
+        .inventory-panel {
+            background: #0a0a12;
+            border: 2px solid #2a2a35;
             border-radius: 40px;
-        }
-        .score-panel {
-            background: #1a1a1a;
-            padding: 10px 16px;
-            border-radius: 48px;
-            margin-bottom: 15px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
             display: flex;
-            justify-content: space-between;
-            border: 1px solid #333;
+            flex-wrap: wrap;
+            gap: 8px 15px;
+            align-items: center;
         }
-        .total-score {
-            color: #ffd700;
-            font-size: 1.3rem;
-            font-weight: bold;
+        .inventory-title { color: #9a8aba; font-weight: bold; font-size: 14px; }
+        .inventory-items { display: flex; flex-wrap: wrap; gap: 6px 10px; }
+        .inventory-item {
+            background: #1a1a26;
+            border: 1px solid #4a4a66;
+            border-radius: 20px;
+            padding: 4px 12px;
+            color: #c0c0e0;
+            font-size: 13px;
         }
-        .target-word {
-            background: #1a1a1a;
-            text-align: center;
-            font-size: 2.7rem;
-            font-weight: 800;
-            letter-spacing: 6px;
-            padding: 20px;
-            border-radius: 48px;
-            margin: 15px 0;
-            color: #ffd700;
-            font-family: monospace;
-            word-break: break-word;
-        }
-        .letters-hint {
-            background: #1e1e1e;
-            padding: 8px;
-            text-align: center;
-            border-radius: 50px;
-            color: #aaa;
-            margin-bottom: 15px;
-            border: 1px solid #333;
-        }
-        .input-area {
+        .no-items { color: #6a6a8a; font-style: italic; font-size: 13px; }
+        .choices {
             display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .choice {
+            background: #111117;
+            border: 2px solid #33333f;
+            color: #d0d0da;
+            padding: 12px 18px;
+            font-size: 15px;
+            border-radius: 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.1s;
+            font-family: inherit;
+        }
+        .choice:hover:not(.choice-disabled) {
+            background: #1e1e2a;
+            border-color: #7a7a9a;
+            transform: translateX(3px);
+        }
+        .choice-disabled {
+            background: #0a0a12;
+            border-color: #2a2a35;
+            color: #6a6a8a;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .bottom-panel {
+            display: flex;
+            align-items: center;
             gap: 12px;
-            margin: 18px 0 10px;
+            background: #0c0c12;
+            border: 2px solid #2a2a35;
+            border-radius: 20px;
+            padding: 12px 20px;
             flex-wrap: wrap;
         }
-        #answerInput {
-            flex: 3;
-            padding: 14px;
-            border-radius: 60px;
-            background: #252525;
-            color: #ffd700;
-            border: 1px solid #444;
-            text-align: center;
-            text-transform: uppercase;
-            font-size: 1.2rem;
-        }
-        #submitBtn {
-            flex: 1;
-            background: #ffd700;
-            border: none;
-            border-radius: 60px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #121212;
+        .arrow {
+            background: #111117;
+            border: 2px solid #33333f;
+            color: #d0d0da;
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
             cursor: pointer;
         }
-        .score-stats {
-            display: flex;
-            justify-content: space-between;
-            background: #1e1e1e;
+        .arrow.disabled { opacity: 0.3; cursor: not-allowed; }
+        .save-code {
+            background: #0f0f17;
+            border: 2px solid #333340;
+            border-radius: 40px;
             padding: 8px 16px;
-            border-radius: 40px;
-            margin: 15px 0;
-            color: #ffd700;
-            font-weight: bold;
-        }
-        .found-words {
-            background: #161616;
-            border-radius: 36px;
-            padding: 12px 18px;
-            min-height: 130px;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #333;
-        }
-        .found-words h3 {
-            margin: 0 0 8px;
-            color: #ffd700;
-            font-size: 1rem;
-        }
-        .word-badge {
-            display: inline-block;
-            background: #252525;
-            color: #ffd700;
-            padding: 5px 12px;
-            margin: 4px 6px 4px 0;
-            border-radius: 32px;
-            font-size: 0.85rem;
-            border: 1px solid #444;
-        }
-        .message {
-            background: #121212;
-            color: #ffd700;
-            padding: 8px;
-            border-radius: 40px;
-            text-align: center;
-            font-size: 0.85rem;
-            margin-top: 12px;
-            border: 1px solid #333;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 14px;
-            margin-top: 14px;
-        }
-        .next-btn, .skip-btn {
             flex: 1;
-            padding: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 40px;
+            color: #b0b0d0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .reset-btn {
+            background: #1a1a26;
+            border: 2px solid #4a4a66;
+            color: #d0d0e0;
+            padding: 8px 18px;
+            border-radius: 30px;
             cursor: pointer;
         }
-        .next-btn { background: #1a5a1a; color: #ffd700; }
-        .skip-btn { background: #3a2a1a; color: #ffd700; }
-        .skip-btn:disabled { background: #2a1a0a; opacity: 0.6; cursor: not-allowed; }
-        footer { font-size: 0.7rem; text-align: center; margin-top: 20px; color: #555; }
-        .progress-bar {
-            background: #2a2a2a;
-            border-radius: 30px;
-            height: 12px;
-            margin: 10px 0;
-            overflow: hidden;
-        }
-        .progress-fill {
-            background: #ffd700;
-            height: 100%;
-            width: 0%;
-            border-radius: 30px;
-            transition: width 0.3s ease;
-        }
-        .level-reward {
-            font-size: 0.75rem;
-            color: #ffd700;
-            text-align: center;
-            margin-top: 8px;
-        }
-        @media (max-width: 550px) {
-            .target-word { font-size: 1.8rem; letter-spacing: 2px; }
-            .action-buttons { flex-direction: column; }
-        }
+        .reset-btn:hover { background: #2a2a36; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a12; }
+        ::-webkit-scrollbar-thumb { background: #4a4a66; border-radius: 10px; }
     </style>
 </head>
 <body>
-<div class="game-container">
-    <h1>📖 СӨЗДӨН СӨЗ 🧩</h1>
-    <div class="sub">Кыргызча оюн — 30 деңгээл (очко системасы)</div>
-
-    <div class="score-panel">
-        <span>🏆 ЖАЛПЫ БАЛЛ</span>
-        <span class="total-score" id="totalScore">0</span>
+<div class="game" id="gameContainer">
+    <div class="game-header">
+        <div class="title" id="gameTitle">❄️ ОСКОЛКИ НАДЕЖДЫ ❄️</div>
+        <div class="stats" id="statsArea">реплик: 0 | предметов: 0</div>
     </div>
-
-    <div class="level-box">
-        <span>🏔️ ДЕҢГЭЭЛ</span>
-        <span class="level-num" id="levelNum">1 / 30</span>
+    <div id="sceneText" class="scene">Загрузка...</div>
+    <div class="inventory-panel">
+        <span class="inventory-title" id="invTitle">📦 ИНВЕНТАРЬ</span>
+        <div id="inventoryList" class="inventory-items"><span class="no-items">пусто</span></div>
     </div>
-    <div class="target-word" id="targetWord">ТАМАК</div>
-    <div class="letters-hint" id="lettersHint">🔤 Тамгалар: Т, А, М, А, К</div>
-    
-    <div class="progress-bar">
-        <div class="progress-fill" id="progressFill"></div>
+    <div id="choicesContainer" class="choices"></div>
+    <div class="bottom-panel">
+        <div style="display:flex; gap:8px"><div id="arrowLeft" class="arrow">←</div><div id="arrowRight" class="arrow">→</div></div>
+        <input id="saveCode" class="save-code" readonly value="---">
+        <button class="reset-btn" id="resetBtn">🔄 СБРОС</button>
     </div>
-
-    <div class="input-area">
-        <input type="text" id="answerInput" placeholder="Сөздү жаз (2+ тамга)" autocomplete="off">
-        <button id="submitBtn">🔍 ТЕКШЕРҮҮ</button>
-    </div>
-
-    <div class="score-stats">
-        <span>⭐ ТАПКАН: <span id="foundCount">0</span> / <span id="totalCount">0</span></span>
-        <span>🎯 ДЕҢГЭЭЛДЕГИ БАЛЛ: <span id="levelScore">0</span></span>
-    </div>
-
-    <div class="found-words">
-        <h3>✅ Табылган сөздөр:</h3>
-        <div id="foundList">—</div>
-    </div>
-
-    <div class="action-buttons">
-        <button id="nextLevelBtn" class="next-btn" style="display: none;">➡️ КИЙИНКИ ДЕҢГЭЭЛ</button>
-        <button id="skipLevelBtn" class="skip-btn">⏩ ПРОПУСК (КД 3 мин)</button>
-    </div>
-    <div id="messageBox" class="message">✨ 5 сөз тапсаңыз, кийинки деңгээлге өтөсүз! Ар бир кошумча сөзгө кошумча упай! ✨</div>
-    <div class="level-reward" id="levelReward"></div>
-    <footer>📜 Тамгаларды гана колдонуңуз. Минимум 5 сөз = өтүү. Ар бир кошумча сөзгө +5 упай!</footer>
 </div>
 
 <script>
-    // ============================================================
-    // 30 ДЕҢГЭЭЛ - АР БИР СӨЗГӨ МҮМКҮН БОЛГОН БАРДЫК СӘЗДӘР (2+ ТАМГА)
-    // ============================================================
-    
-    const LEVELS_DATA = {
-        "ТАМАК": { words: ["АК", "АКТ", "АМ", "АМАК", "АТ", "АТА", "КА", "КАМА", "КАТА", "КТ", "МА", "МАК", "МАКА", "МАКТА", "МАМА", "ТА", "ТАК", "ТАКА", "ТАМ", "ТАМА"] },
-        "БАЛАЛЫК": { words: ["АК", "АЛ", "АЛА", "АЛЫ", "АЛЫК", "АЛЫС", "БА", "БАК", "БАЛ", "БАЛА", "БАЛКЫ", "БАЛЫК", "КА", "КАЛ", "КЫ", "КЫЛ", "КЫЛА", "ЛА", "ЛАК", "ЛЫ", "ЫК", "ЫЛ", "ЫЛА"] },
-        "МЕКТЕП": { words: ["ЕК", "ЕТ", "КЕ", "КЕМЕ", "КЕП", "КЕТ", "КТ", "МЕ", "МЕК", "МЕКЕ", "МЕТ", "ПЕ", "ПЕК", "ПЕТ", "ТЕ", "ТЕК", "ТЕМП", "ТП", "ТЕП"] },
-        "ЫРАСМАН": { words: ["АН", "АНЫ", "АР", "АРС", "АСМАН", "МА", "МАН", "МАРА", "МАС", "МЫ", "НАР", "РА", "РАМА", "РАН", "РАС", "СА", "САМ", "САН", "САР", "ЫР", "ЫРАС"] },
-        "ТАБИГАТ": { words: ["АА", "АБА", "АК", "АКЫ", "АТ", "АТА", "БА", "БАА", "БАГ", "БАТ", "БИТ", "ГА", "ГАТА", "ГИТ", "ИТ", "КИТА", "ТА", "ТАБ", "ТАБА", "ТАГА", "ТАГЫ", "ТАК"] },
-        "КҮНЧЫГЫШ": { words: ["ГЫ", "ГЫЧ", "ГЫШ", "КҮ", "КҮН", "КҮНЧЫ", "КҮЧ", "КЫЧ", "НЧ", "ҮН", "ҮЧ", "ЧЫ", "ЧЫГЫШ", "ЧЫН", "ЫГЫШ", "ЫК", "ЫШ"] },
-        "АДАМКЕРЧИЛИК": { words: ["АДАЛ", "АДАМ", "АДАМКЕР", "АК", "АКЫЛ", "АЛ", "АР", "ДА", "ДАМ", "ДИ", "ЕК", "ЕЛ", "ИК", "ИЛИК", "ИР", "КА", "КЕ", "КЕЛ", "КЕР", "КЕРЕК", "КИ", "КИЛ", "КИР", "ЛИК", "МА", "МАК", "МИ", "РА", "РИ", "ЧИ", "ЧИЛ", "ЧЫК", "ЫК"] },
-        "ЫЙЫКМАЧЫЛЫК": { words: ["АК", "АКЫЛ", "АЛ", "АЧ", "АЧЫК", "ЙЫ", "КА", "КЫ", "КЫЛ", "КЫЧ", "МА", "МАК", "МАЧЫ", "РЫ", "ЧАК", "ЧЫ", "ЧЫК", "ЧЫР", "ЫЙ", "ЫЙЫК", "ЫК", "ЫЛ", "ЫЛАК", "ЫР", "ЫРК", "ЫСЫК"] },
-        "МАМЛЕКЕТ": { words: ["АК", "АКЕ", "АМ", "АМА", "АТ", "ЕК", "ЕЛ", "ЕТ", "КА", "КЕ", "КЕТ", "ЛЕ", "ЛЕК", "МА", "МАК", "МАЛ", "МАМ", "МАМА", "МАМЛЕ", "МЕК", "МЕКЕН", "ТЕ", "ТЕК", "ТК"] },
-        "БИЛИМДҮҮЛҮК": { words: ["БИ", "БИЛ", "БИЛИМ", "БӨЛ", "ДҮ", "ДҮК", "ИЛ", "ИЛИМ", "ИМ", "КӨЛ", "КҮЛ", "ЛИ", "ЛҮ", "ЛҮК", "МИ", "МИЛ", "МҮ", "ӨЛ", "ТИ", "ҮЛ", "ҮЛҮК"] },
-        "КЫРГЫЗСТАН": { words: ["АЗЫК", "АН", "АРАН", "АР", "ГЫ", "ГЫЗ", "ЗА", "ЗАН", "КА", "КАН", "КЫ", "КЫЗ", "КЫР", "КЫРГЫЗ", "НА", "НАР", "НЫР", "РЫ", "РЫК", "СА", "САН", "СТ", "СТАН", "СЫР", "ТА", "ТАН", "ТАНЫ", "ЫР"] },
-        "ТАРБИЯ": { words: ["АА", "АКЫ", "АР", "АРБА", "БА", "БАР", "БИ", "БИЯ", "ИЯ", "КЫ", "РА", "РАТ", "РЫБ", "ТА", "ТАБ", "ТАР", "ТАРА", "ЫР", "ЯК"] },
-        "АКЫЛМАН": { words: ["АК", "АКЫ", "АКЫЛ", "АЛ", "АЛА", "АЛЫМ", "АН", "АР", "КА", "КАЛ", "КАН", "КЫ", "ЛАН", "ЛА", "ЛЫ", "МА", "МАН", "НА", "ЫК", "ЫЛАК", "ЫЛ", "ЫМ", "ЫР"] },
-        "АЛТЫН": { words: ["АК", "АЛ", "АЛА", "АЛТ", "АЛТЫН", "АН", "АНТ", "АРЫ", "АТ", "АТА", "КЫ", "ЛАН", "НАТ", "НТ", "ТАН", "ТЫ", "ТЫН", "ЫН", "ЫР"] },
-        "КОНУМ": { words: ["КМ", "КО", "КОН", "КОНУ", "КОНУМ", "КУМ", "МК", "МУ", "НМ", "НУ", "НУМ", "ОК", "ОКУМ", "ОН", "УК", "УМ", "УН"] },
-        "ЖАЗГЫЧЫЛЫК": { words: ["АЗЫК", "АК", "АКЫЛ", "ГЫ", "ГЫЧ", "ЖА", "ЖАЗ", "ЖАЗГЫЧ", "ЖАЗЫК", "ЖАЛ", "ЖАЛЫН", "ЗЫ", "ЗЫК", "КЫ", "КЫЛ", "КЫЛЫЧ", "ЛАК", "ЛЫ", "ЧАК", "ЧЫ", "ЧЫЛЫК", "ЫК", "ЫСЫК", "ҮЧ", "ҮЧҮК"] },
-        "МУРАСТОО": { words: ["АР", "АРА", "МА", "МАСТОО", "МУ", "МУР", "МУРАС", "РА", "РАС", "РУС", "СА", "САМ", "САР", "СО", "СООТ", "СТ", "СТОО", "ТО", "ТОО", "ТОСУУ", "УРА", "УС", "УСТА"] },
-        "ӨНӨРЛҮҮ": { words: ["КӨР", "ЛҮ", "ЛҮҮ", "ЛӨР", "НӨ", "НӨЛ", "НӨР", "НӨРЛҮҮ", "РЛ", "РЛҮ", "РӨ", "РӨК", "Ө", "ӨК", "ӨЛ", "ӨЛҮ", "ӨН", "ӨНӨР", "ӨР", "ӨРК", "ҮР"] },
-        "КАРЫЛЫК": { words: ["АК", "АКЫР", "АР", "АРЫ", "АРЫК", "КА", "КАЛЫ", "КАР", "КАРА", "КАРЫ", "КЫ", "КЫЛ", "КЫР", "ЛА", "ЛЫ", "ЛЫК", "РЫ", "РЫК", "ЫЛЫК", "ЫР"] },
-        "БОТОНОЙ": { words: ["БО", "БОЙ", "БОТ", "БОТО", "БТ", "ЙД", "НО", "НОЙ", "ОБ", "ОЙ", "ОН", "ОТ", "ОТОН", "ТН", "ТО", "ТОЙ", "ТОН", "ТОНО"] },
-        "ЖАРАТЫЛЫШ": { words: ["АРА", "АР", "АРЫ", "АРЫШ", "АТ", "АТЫШ", "АШ", "ЖА", "ЖАР", "ЖАРА", "ЖАРЫК", "ЖЫЛ", "ЛА", "ЛЫ", "ЛЫШ", "РА", "РАТ", "РЫ", "ТАРЫ", "ТЫ", "ТЫЛЫШ", "ШЫ", "ШЫЛЫК", "ЫЛ", "ЫЛАЙ"] },
-        "ТАМГА": { words: ["АГ", "АГА", "АГАМ", "АК", "АКТА", "АМ", "АМА", "АТ", "ГА", "ГАМ", "ГАТА", "КА", "КАГА", "КГ", "КТ", "МА", "МАГА", "МГ", "ТА", "ТАГА", "ТАМ", "ТАМГА", "ТМ"] },
-        "ЭРКИНДИК": { words: ["ДИ", "ДИК", "ДИН", "ЕК", "ЕН", "ИН", "ИР", "ИРК", "КЕ", "КЕН", "КИ", "КИН", "КИНДИК", "КИР", "КИРЕ", "КН", "КР", "НД", "НДК", "НЭР", "РК", "РЭК", "ЭК", "ЭН", "ЭР", "ЭРК", "ЭРКИН"] },
-        "ЫРЧЫЛЫК": { words: ["КЫ", "КЫЛ", "КЫР", "ЛЫ", "РЫ", "РЫК", "РЫЧ", "ЧЫ", "ЧЫК", "ЧЫЛ", "ЧЫЛЫК", "ЧЫР", "ЫК", "ЫЛ", "ЫЛЫК", "ЫР", "ЫРК", "ЫРЧЫ"] },
-        "БИЛЕМИ": { words: ["БЕ", "БЕЛ", "БИ", "БИЛ", "БИЛЕ", "БИЛЕМ", "БИЛЕМИ", "БИМ", "ЕК", "ЕМ", "ЕМИ", "ИЛ", "ИЛЕ", "ИЛЕК", "ИЛЕМ", "ИМ", "КЕ", "КИ", "ЛЕ", "ЛЕК", "ЛЕМ", "ЛЕМИ", "ЛИ", "ЛИМ", "МЕ", "МИ", "МИЛ", "МИЛЕ"] },
-        "КӨРКӨМ": { words: ["КМ", "КӨ", "КӨМ", "КӨР", "КӨРК", "КӨРӨ", "МК", "МӨ", "МӨК", "РК", "РКӨ", "РӨ", "РӨК", "ӨК", "ӨР", "ӨРК", "ӨРӨ", "ӨТ"] },
-        "САЛТТУУЛУК": { words: ["АК", "АКЫЛ", "АЛ", "АЛТ", "АЛТУУ", "АЛТУУЛ", "КЫ", "ЛА", "ЛУ", "ЛУК", "СА", "САЛ", "САЛКЫН", "САЛТ", "ТА", "ТАС", "ТУ", "ТУУ", "ТУУЛУК", "ТУЛ", "ТУЛУК", "УК", "УЛ", "УЛА", "УЛАН", "УЛУ", "УЛУК"] },
-        "МААНИЛҮҮ": { words: ["АА", "ААНИ", "АК", "АЛҮҮ", "АН", "АНИ", "ИЛ", "ИЛҮҮ", "ЛҮ", "ЛҮҮ", "МА", "МАА", "МААНИ", "МААН", "МАН", "МАНИ", "МК", "НИ", "НИЛ", "НИЛЕ", "НИЛҮҮ", "НӨ", "ӨЛ", "ҮЛ", "ҮН"] },
-        "НУРЛУУ": { words: ["ЛУ", "ЛУН", "ЛУУ", "ЛӨ", "НЛ", "НР", "НУ", "НУР", "НУРУ", "НӨ", "РЛ", "РУ", "РУЛ", "УЛ", "УЛАН", "УЛУ", "УН", "УР", "УРУН", "ӨЛ"] },
-        "ТИЛЕК": { words: ["ЕК", "ЕЛ", "ИК", "ИЛ", "ИЛЕ", "ИЛЕК", "ИТ", "КЕ", "КЕЛ", "КИ", "КИЛ", "КИЛЕ", "КИТ", "ЛЕ", "ЛЕК", "ЛЕКЕ", "ЛЕТ", "ЛИ", "ЛИТ", "ЛИТР", "ТЕ", "ТЕК", "ТИ", "ТИК", "ТИЛ", "ТК", "ТЛ"] }
+    // Тексты на русском
+    const texts = {
+        invTitle: "📦 ИНВЕНТАРЬ",
+        emptyInv: "пусто",
+        statsReplic: "реплик:",
+        statsItems: "предметов:",
+        resetBtn: "🔄 СБРОС",
+        titleGame: "❄️ ОСКОЛКИ НАДЕЖДЫ ❄️",
+        continueBtn: "→ продолжить",
+        nextBtn: "→ дальше",
+        restartChoice: "→ начать заново",
+        
+        startScene: "📍 ПОДЪЕЗД\n\nТы приходишь в себя на холодном бетонном полу. Голова гудит. Рядом лежит девушка — её лицо бледное. В руке зажата фотография и записка: «Школа №7. Там правда». Нужно выбираться.",
+        choiceGirl: "осмотреть девушку",
+        choiceExit: "выйти на улицу",
+        choiceSearchPorch: "обыскать подъезд",
+        girlCheck: "Кожа холодная. Она не дышит. На шее странная отметина. На обороте фото: «Помни. Ты был здесь». Мурашки по спине.",
+        searchPorchRes: "В почтовом ящике находишь нож и спички. Под ним газета: «Эпидемия. Город на карантине». Дата — три недели назад.",
+        streetStart: "📍 УЛИЦА\n\nСерый туман над разбитым асфальтом. Перевёрнутые машины. Вдалеке школа №7. Справа тёмный парк. Холод пробирает до костей.",
+        choiceSchool: "идти к школе",
+        choicePark: "зайти в парк",
+        choiceMap: "посмотреть карту",
+        mapCheck: "На карте: школа, парк, лес, лагерь выживших, военный бункер. Красным обведена школа: «Начало всего».",
+        parkEntrance: "📍 ПАРК\n\nСтарые деревья. На скамейке девочка в школьной форме. Рядом рюкзак.",
+        choiceApproach: "подойти к девочке",
+        choiceBackpack: "осмотреть рюкзак",
+        girlParkTalk: "Девочка: «Иди в школу. Там ответы». Она даёт отмычку и исчезает.",
+        parkBackpackRes: "В рюкзаке: еда, вода, карта. Дневник: «Они пришли ночью».",
+        schoolHall: "📍 ШКОЛА\n\nДвери распахнуты. Пахнет плесенью. Стены в граффити: «ОНИ ЗНАЮТ», «НЕ ХОДИ В ПОДВАЛ».",
+        choiceClass: "пойти в класс",
+        choiceBasement: "спуститься в подвал",
+        schoolClass: "Класс разгромлен. На доске: «КЛЮЧ В КНИГЕ».",
+        searchBooks: "искать в книгах",
+        searchCloset: "осмотреть шкаф",
+        booksRes: "В книге находишь отмычки и фото класса. На обороте: «Я знаю, ты вернёшься».",
+        closetRes: "В шкафу фонарик. Дневник: «Они из лаборатории».",
+        basementDoor: "Дверь в подвал заперта. Надпись: «ОНИ ТАМ». Слышна капель.",
+        choicePick: "вскрыть отмычкой",
+        basementInside: "В углу сидит человек в плаще. «Я Сергей, учитель. Вирус из лаборатории. Выжившие ушли в лес».",
+        choiceTrust: "довериться",
+        choiceAsk: "спросить подробности",
+        trustRes: "Сергей: «Пойдём в лагерь». Он даёт аптечку и бинты.",
+        askRes: "«Эпидемия три недели назад. Люди меняются. Бункер на востоке». Он даёт рацию.",
+        campArrival: "📍 ЛАГЕРЬ\n\nПалатки, костёр. Старейшина: «Новичок? Проходи». Рядом охотник Дмитрий и врач Анна.",
+        choiceElder: "поговорить со старейшиной",
+        choiceAskFood: "попросить еды",
+        choiceExplore: "осмотреть лагерь",
+        elderTalk: "«На востоке военный бункер. Там припасы. Поможешь найти — примешь нас в семью». Он даёт карту.",
+        askFoodRes: "Тебе дают еду и воду. «Держи, мы все братья».",
+        exploreCamp: "Старая рация. Нужны батарейки.",
+        fixRadio: "починить рацию",
+        fixRadioRes: "Рация ожила. Слышен голос: «...помощь... бункер 7... координаты...». Люди плачут от радости.",
+        campStayEnd: "🏆 КОНЦОВКА: Ты остаёшься в лагере. Живёшь в мире, помогаешь другим. Но чувствуешь — правда осталась где-то в школе. Однажды ночью ты смотришь на звёзды и понимаешь — твой путь ещё не закончен. 🏆",
+        forestPath: "📍 ЛЕС\n\nВысокие сосны, снег. Дмитрий идёт впереди. «Бункер должен быть где-то здесь». Тропа раздваивается.",
+        choiceHut: "пойти к избушке",
+        choiceDeep: "идти дальше по тропе",
+        hutKnock: "постучать",
+        hutAround: "обойти вокруг",
+        hutKnockRes: "Старушка: «Заходите, погрейтесь». Она даёт еду и спички. «Бункер? Идите дальше по тропе, за оврагом».",
+        hutAroundRes: "За избушкой находишь старый топор.",
+        forestDeep: "Глубже в лесу. Слышны звуки. Впереди железная дверь, вросшая в землю. Военный бункер!",
+        bunkerDoor: "Тяжёлая железная дверь. Кодовая панель. Нужен код доступа.",
+        bunkerOpenRes: "Дверь открывается. Внутри — склад: ящики с едой, водой, медикаментами, оружием. Анна плачет. Старейшина жмёт руку: «Ты спас нас всех!»",
+        bunkerInside: "Внутри бункера тепло и безопасно. На стенах карты, радиостанция. Выжившие обустраиваются. Ты смотришь на фотографию девочки из подъезда — она улыбается. Кажется, она знала, что всё закончится хорошо.",
+        goodEnding: "✨✨✨ ХОРОШАЯ КОНЦОВКА ✨✨✨\n\nВы нашли бункер и спасли лагерь. Теперь у вас есть убежище, припасы и будущее. Вы вместе — а значит, выживете. Город остался позади, но впереди новая жизнь. Фотография девочки всегда с тобой — напоминание о том, что надежда умирает последней. ✨✨✨",
+        defaultNext: "Ты продолжаешь путь по пустошам..."
     };
 
-    // ========== ОЮНДУН АБАЛЫ ==========
-    let currentLevelIndex = 0;
-    let currentWord = "";
-    let allWordsList = [];
-    let foundWords = new Set();
-    let totalScore = 0;
-    let currentLevelScore = 0;
-    let skipCooldown = 0;
-    let skipTimer = null;
-    let skipActive = false;
-
-    const LEVELS_LIST = Object.keys(LEVELS_DATA);
-    const PASS_MINIMUM = 5;  // Минимум 5 слов для перехода
-
-    function updateProgress() {
-        let total = allWordsList.length;
-        let found = foundWords.size;
-        let percent = total > 0 ? Math.floor((found / total) * 100) : 0;
-        
-        document.getElementById("foundCount").innerHTML = found;
-        document.getElementById("totalCount").innerHTML = total;
-        document.getElementById("progressFill").style.width = percent + "%";
-        document.getElementById("levelScore").innerHTML = currentLevelScore;
-        document.getElementById("totalScore").innerHTML = totalScore;
-        
-        // Проверка на переход (минимум 5 слов)
-        if (found >= PASS_MINIMUM) {
-            document.getElementById("nextLevelBtn").style.display = "block";
-            let bonus = found - PASS_MINIMUM;
-            if (bonus > 0) {
-                document.getElementById("levelReward").innerHTML = `🎁 Кошумча ${bonus} сөз таптыңыз! +${bonus * 5} упай бонус!`;
-            } else {
-                document.getElementById("levelReward").innerHTML = `✅ 5 сөз табылды. Кийинки деңгээлге өтсөңүз болот!`;
-            }
-            if (found === total) {
-                document.getElementById("messageBox").innerHTML = "🎉 БАРДЫК СӨЗДӨР ТАБЫЛДЫ! Мыкты иш! 🎉";
-            }
-        } else {
-            document.getElementById("nextLevelBtn").style.display = "none";
-            let need = PASS_MINIMUM - found;
-            document.getElementById("levelReward").innerHTML = `📌 Дагы ${need} сөз табыңыз (минималдуу 5 сөз керек)`;
-        }
-    }
-
-    function calculateLevelBonus() {
-        let found = foundWords.size;
-        if (found < PASS_MINIMUM) return 0;
-        // Базалык упай: 10 упай + ар бир кошумча сөзгө 5 упай
-        let bonus = 10 + (found - PASS_MINIMUM) * 5;
-        return bonus;
-    }
-
-    function finishLevel() {
-        if (foundWords.size >= PASS_MINIMUM) {
-            let levelBonus = calculateLevelBonus();
-            currentLevelScore = levelBonus;
-            totalScore += levelBonus;
-            updateProgress();
-            document.getElementById("messageBox").innerHTML = `✨ Деңгээл аяктады! Сиз ${levelBonus} упай алдыңыз! (минималдуу 5 сөз + кошумча) ✨`;
-        }
-    }
-
-    function loadLevel(index) {
-        if (index >= LEVELS_LIST.length) {
-            document.getElementById("targetWord").innerText = "ЖЕҢИШ!";
-            document.getElementById("lettersHint").innerHTML = "🏆 БАРДЫК 30 ДЕҢГЭЭЛ АЯКТАЛДЫ 🏆";
-            document.getElementById("answerInput").disabled = true;
-            document.getElementById("submitBtn").disabled = true;
-            document.getElementById("progressFill").style.width = "100%";
-            document.getElementById("totalScore").innerHTML = totalScore;
-            document.getElementById("messageBox").innerHTML = `🏆 ОЮН БҮТТҮ! Жалпы упайыңыз: ${totalScore} 🏆`;
-            return;
-        }
-        
-        currentWord = LEVELS_LIST[index];
-        allWordsList = [...LEVELS_DATA[currentWord].words];
-        foundWords.clear();
-        currentLevelScore = 0;
-        
-        document.getElementById("targetWord").innerText = currentWord;
-        document.getElementById("lettersHint").innerHTML = `🔤 Тамгалар: ${[...currentWord].join(', ')}`;
-        document.getElementById("levelNum").innerHTML = `${index+1} / ${LEVELS_LIST.length}`;
-        document.getElementById("foundList").innerHTML = "—";
-        document.getElementById("answerInput").disabled = false;
-        document.getElementById("submitBtn").disabled = false;
-        document.getElementById("answerInput").value = "";
-        document.getElementById("answerInput").focus();
-        document.getElementById("messageBox").innerHTML = `📖 "${currentWord}" — ${PASS_MINIMUM} сөз тапсаңыз өтөсүз! (бардыгы ${allWordsList.length} сөз бар)`;
-        document.getElementById("levelReward").innerHTML = `🎯 Ар бир кошумча сөзгө +5 упай!`;
-        
-        updateProgress();
-    }
-
-    function checkWord() {
-        let input = document.getElementById("answerInput").value.trim().toUpperCase();
-        if (input === "") {
-            document.getElementById("messageBox").innerHTML = "⚠️ Сөздү жазыңыз!";
-            return;
-        }
-        if (input.length < 2) {
-            document.getElementById("messageBox").innerHTML = `❌ "${input}" — 2 тамгадан кем!`;
-            document.getElementById("answerInput").value = "";
-            return;
-        }
-        if (input === currentWord) {
-            document.getElementById("messageBox").innerHTML = `❌ "${input}" — баштапкы сөздүн өзү!`;
-            document.getElementById("answerInput").value = "";
-            return;
-        }
-        if (foundWords.has(input)) {
-            document.getElementById("messageBox").innerHTML = `❌ "${input}" — мурун табылган!`;
-            document.getElementById("answerInput").value = "";
-            return;
-        }
-        if (!LEVELS_DATA[currentWord].words.includes(input)) {
-            document.getElementById("messageBox").innerHTML = `❌ "${input}" — бул сөздү түзүүгө болбойт!`;
-            document.getElementById("answerInput").value = "";
-            return;
-        }
-        
-        foundWords.add(input);
-        document.getElementById("messageBox").innerHTML = `✅ "${input}" туура! +1 сөз!`;
-        document.getElementById("answerInput").value = "";
-        
-        let sorted = Array.from(foundWords).sort();
-        let badges = sorted.map(w => `<span class="word-badge">${w}</span>`).join('');
-        document.getElementById("foundList").innerHTML = badges;
-        
-        updateProgress();
-        
-        // Если нашли все слова, сразу считаем бонус
-        if (foundWords.size === allWordsList.length) {
-            finishLevel();
-        }
-        
-        document.getElementById("answerInput").focus();
-    }
-
-    function nextLevel() {
-        if (foundWords.size >= PASS_MINIMUM) {
-            // Вычисляем бонус за этот уровень перед переходом
-            let levelBonus = calculateLevelBonus();
-            if (currentLevelScore === 0) {
-                currentLevelScore = levelBonus;
-                totalScore += levelBonus;
-                updateProgress();
-                document.getElementById("messageBox").innerHTML = `✨ ${levelBonus} упай алдыңыз! (${foundWords.size} сөз табылды) ✨`;
-            }
-            currentLevelIndex++;
-            loadLevel(currentLevelIndex);
-        } else {
-            let need = PASS_MINIMUM - foundWords.size;
-            document.getElementById("messageBox").innerHTML = `⛔ Дагы ${need} сөз табышыңыз керек! (минималдуу ${PASS_MINIMUM} сөз керек)`;
-        }
-    }
-
-    function updateSkipButton() {
-        let btn = document.getElementById("skipLevelBtn");
-        if (skipActive && skipCooldown > 0) {
-            let mins = Math.floor(skipCooldown / 60);
-            let secs = skipCooldown % 60;
-            btn.innerHTML = `⏳ ПРОПУСК (${mins}:${secs.toString().padStart(2,'0')})`;
-            btn.disabled = true;
-        } else {
-            btn.innerHTML = `⏩ ПРОПУСК УРОВНЯ`;
-            btn.disabled = false;
-            skipActive = false;
-        }
-    }
-
-    function skipLevel() {
-        if (skipActive || skipCooldown > 0) {
-            document.getElementById("messageBox").innerHTML = `⛔ Пропусктан кийин 3 мүнөт күтүш керек!`;
-            return;
-        }
-        if (currentLevelIndex + 1 >= LEVELS_LIST.length) {
-            document.getElementById("messageBox").innerHTML = `⛔ Бул акыркы деңгээл, пропуск мүмкүн эмес!`;
-            return;
-        }
-        
-        // Пропуск - упай бербейт
-        currentLevelIndex++;
-        loadLevel(currentLevelIndex);
-        
-        skipActive = true;
-        skipCooldown = 180;
-        updateSkipButton();
-        
-        if (skipTimer) clearInterval(skipTimer);
-        skipTimer = setInterval(() => {
-            if (skipCooldown <= 1) {
-                clearInterval(skipTimer);
-                skipActive = false;
-                skipCooldown = 0;
-                updateSkipButton();
-                document.getElementById("messageBox").innerHTML = "⏰ Пропуск кайра жеткиликтүү!";
-            } else {
-                skipCooldown--;
-                updateSkipButton();
-            }
-        }, 1000);
-        
-        document.getElementById("messageBox").innerHTML = "⏩ ДЕҢГЭЭЛ ПРОПУЩЕН! КД 3 мүнөт. (упай берилбейт)";
-    }
-
-    document.getElementById("submitBtn").onclick = checkWord;
-    document.getElementById("nextLevelBtn").onclick = nextLevel;
-    document.getElementById("skipLevelBtn").onclick = skipLevel;
-    document.getElementById("answerInput").onkeypress = (e) => { if (e.key === "Enter") checkWord(); };
+    // Инвентарь
+    let inventory = {
+        'еда':0,'вода':0,'бинты':0,'аптечка':0,'батарейки':0,'спички':0,
+        'верёвка':0,'отмычка':0,'нож':0,'фонарик':0,'рация':0,'карта':0
+    };
+    const itemNames = {
+        'еда':'🍞 Еда','вода':'💧 Вода','бинты':'🩹 Бинты',
+        'аптечка':'💊 Аптечка','батарейки':'🔋 Батарейки',
+        'спички':'🔥 Спички','верёвка':' Верёвка',
+        'отмычка':'🔓 Отмычка','нож':'🔪 Нож','фонарик':'🔦 Фонарик',
+        'рация':'📻 Рация','карта':'🗺️ Карта'
+    };
     
-    loadLevel(0);
+    function addItem(id,q=1){ if(inventory[id]!==undefined){ inventory[id]+=q; updateInvDisplay(); } }
+    function removeItem(id,q=1){ if(inventory[id]>=q){ inventory[id]-=q; updateInvDisplay(); return true; } return false; }
+    function hasItem(id,q=1){ return inventory[id]>=q; }
+     
+    function updateInvDisplay(){
+        let items=[];
+        for(let [id,qty] of Object.entries(inventory)) if(qty>0) items.push(`<span class="inventory-item">${itemNames[id]} x${qty}</span>`);
+        document.getElementById('inventoryList').innerHTML = items.length ? items.join('') : `<span class="no-items">${texts.emptyInv}</span>`;
+        let total=Object.values(inventory).reduce((a,b)=>a+b,0);
+        document.getElementById('statsArea').innerHTML = `${texts.statsReplic} ${replicaCount} | ${texts.statsItems} ${total}`;
+        document.getElementById('invTitle').innerText = texts.invTitle;
+        document.getElementById('resetBtn').innerText = texts.resetBtn;
+        document.getElementById('gameTitle').innerText = texts.titleGame;
+    }
+     
+    let currentLocation="Подъезд", sceneId="start", ending=null, replicaCount=0;
+    let metGirl=false,injured=false,park=false,metStranger=false,metSurvivors=false,helpedOldWoman=false,radioFixed=false,hasKeyCard=false,bunkerFound=false;
+    let history=[],historyIndex=-1,isViewingHistory=false;
+    const sceneEl=document.getElementById('sceneText'), choicesEl=document.getElementById('choicesContainer');
+     
+    function addReplica(){ replicaCount++; updateInvDisplay(); }
+    function addToHistory(text){ history.push(text); historyIndex=history.length-1; isViewingHistory=false; }
+    function updateArrows(){ arrowLeft.classList.toggle('disabled',historyIndex<=0); arrowRight.classList.toggle('disabled',historyIndex>=history.length-1||!isViewingHistory); }
+     
+    function addChoice(text, nextScene, nextLoc=null, needItem=null, needQty=1, useItem=null){
+        let btn=document.createElement('button'); btn.className='choice';
+        let canDo=!needItem||hasItem(needItem,needQty);
+        if(!canDo){ btn.classList.add('choice-disabled'); btn.disabled=true; btn.innerText=`${text} ❌ (нужно: ${itemNames[needItem]||needItem})`; }
+        else{ btn.innerText=text; btn.onclick=()=>{ if(useItem&&needItem) removeItem(useItem,needQty); if(nextLoc) currentLocation=nextLoc; sceneId=nextScene; ending=null; render(); }; }
+        choicesEl.appendChild(btn);
+    }
+    function addNext(nextScene,nextLoc=null){
+        let btn=document.createElement('button'); btn.className='choice'; btn.innerText=texts.nextBtn;
+        btn.onclick=()=>{ if(nextLoc) currentLocation=nextLoc; sceneId=nextScene; render(); };
+        choicesEl.appendChild(btn);
+    }
+     
+    function render(){
+        if(isViewingHistory) return;
+        choicesEl.innerHTML='';
+        if(ending){ sceneEl.innerText=ending; addChoice(texts.restartChoice,'start','Подъезд'); addToHistory(ending); return; }
+        let text=""; addReplica();
+        // Логика сцен
+        if(currentLocation==="Подъезд" && sceneId==="start"){
+            text=texts.startScene;
+            addChoice(texts.choiceGirl,"girl_check","Подъезд"); 
+            addChoice(texts.choiceExit,"street_start","Улица"); 
+            addChoice(texts.choiceSearchPorch,"search_porch","Подъезд");
+        } else if(currentLocation==="Подъезд" && sceneId==="girl_check"){ 
+            text=texts.girlCheck; metGirl=true; 
+            addChoice(texts.choiceExit,"street_start","Улица"); 
+            addChoice(texts.choiceSearchPorch,"search_porch","Подъезд");
+        } else if(currentLocation==="Подъезд" && sceneId==="search_porch"){ 
+            text=texts.searchPorchRes; addItem('нож',1); addItem('спички',3); 
+            addChoice(texts.choiceExit,"street_start","Улица");
+        } else if(currentLocation==="Улица" && sceneId==="street_start"){ 
+            text=texts.streetStart; 
+            addChoice(texts.choiceSchool,"school_hall","Школа"); 
+            addChoice(texts.choicePark,"park_entrance","Парк"); 
+            if(hasItem('карта')) addChoice(texts.choiceMap,"map_check","Улица");
+        } else if(currentLocation==="Улица" && sceneId==="map_check"){ 
+            text=texts.mapCheck; 
+            addChoice(texts.choiceSchool,"school_hall","Школа"); 
+            addChoice("→ Лагерь","camp_arrival","Лагерь выживших");
+        } else if(currentLocation==="Парк" && sceneId==="park_entrance"){ 
+            text=texts.parkEntrance; 
+            addChoice(texts.choiceApproach,"girl_park_talk","Парк"); 
+            addChoice(texts.choiceBackpack,"park_backpack","Парк"); 
+            addChoice(texts.choiceExit,"street_start","Улица");
+        } else if(currentLocation==="Парк" && sceneId==="girl_park_talk"){ 
+            text=texts.girlParkTalk; addItem('отмычка',1); 
+            addChoice(texts.choiceBackpack,"park_backpack","Парк"); 
+            addChoice(texts.choiceExit,"street_start","Улица");
+        } else if(currentLocation==="Парк" && sceneId==="park_backpack"){ 
+            text=texts.parkBackpackRes; addItem('еда',2); addItem('вода',2); addItem('карта',1); 
+            addChoice("← назад","park_entrance","Парк");
+        } else if(currentLocation==="Школа" && sceneId==="school_hall"){ 
+            text=texts.schoolHall; 
+            addChoice(texts.choiceClass,"school_class","Школа"); 
+            addChoice(texts.choiceBasement,"basement_door","Школа"); 
+            addChoice(texts.choiceExit,"street_start","Улица");
+        } else if(currentLocation==="Школа" && sceneId==="school_class"){ 
+            text=texts.schoolClass; 
+            addChoice(texts.searchBooks,"search_books","Школа"); 
+            addChoice(texts.searchCloset,"search_closet","Школа"); 
+            addChoice("← назад","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="search_books"){ 
+            text=texts.booksRes; addItem('отмычка',2); 
+            addChoice(texts.searchCloset,"search_closet","Школа"); 
+            addChoice("← назад","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="search_closet"){ 
+            text=texts.closetRes; addItem('фонарик',1); 
+            addChoice("← назад","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="basement_door"){ 
+            text=texts.basementDoor; 
+            if(hasItem('отмычка')) addChoice(texts.choicePick,"basement_inside","Школа",'отмычка',1,'отмычка'); 
+            else addChoice("отмычка","basement_inside","Школа",'отмычка'); 
+            addChoice("← назад","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="basement_inside"){ 
+            text=texts.basementInside; metStranger=true; 
+            addChoice(texts.choiceTrust,"basement_trust","Школа"); 
+            addChoice(texts.choiceAsk,"basement_ask","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="basement_trust"){ 
+            text=texts.trustRes; addItem('аптечка',1); addItem('бинты',2); 
+            addChoice("→ Лагерь","camp_arrival","Лагерь выживших"); 
+            addChoice("← остаться","school_hall","Школа");
+        } else if(currentLocation==="Школа" && sceneId==="basement_ask"){ 
+            text=texts.askRes; addItem('рация',1); 
+            addChoice("→ Лагерь","camp_arrival","Лагерь выживших"); 
+            addChoice("← остаться","school_hall","Школа");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="camp_arrival"){ 
+            text=texts.campArrival; metSurvivors=true; 
+            addChoice(texts.choiceElder,"elder_talk","Лагерь выживших"); 
+            addChoice(texts.choiceAskFood,"ask_food_camp","Лагерь выживших"); 
+            addChoice(texts.choiceExplore,"explore_camp","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="elder_talk"){ 
+            text=texts.elderTalk; addItem('карта',1); 
+            addChoice("→ в лес","forest_path","Лес"); 
+            addChoice("отказаться","camp_stay","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="ask_food_camp"){ 
+            text=texts.askFoodRes; addItem('еда',2); addItem('вода',2); 
+            addChoice(texts.choiceElder,"elder_talk","Лагерь выживших"); 
+            addChoice(texts.choiceExplore,"explore_camp","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="explore_camp"){ 
+            text=texts.exploreCamp; 
+            if(hasItem('батарейки')) addChoice(texts.fixRadio,"fix_radio","Лагерь выживших",'батарейки',2,'батарейки'); 
+            addChoice("← назад","camp_arrival","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="fix_radio"){ 
+            text=texts.fixRadioRes; radioFixed=true; 
+            addChoice("← назад","camp_arrival","Лагерь выживших");
+        } else if(currentLocation==="Лагерь выживших" && sceneId==="camp_stay"){ 
+            ending=texts.campStayEnd; render(); return;
+        } else if(currentLocation==="Лес" && sceneId==="forest_path"){ 
+            text=texts.forestPath; 
+            addChoice(texts.choiceHut,"forest_hut","Лес"); 
+            addChoice(texts.choiceDeep,"forest_deep","Лес"); 
+            addChoice("← назад","camp_arrival","Лагерь выживших");
+        } else if(currentLocation==="Лес" && sceneId==="forest_hut"){ 
+            text="Охотничья избушка. Из трубы идёт дым."; 
+            addChoice(texts.hutKnock,"hut_knock","Лес"); 
+            addChoice(texts.hutAround,"hut_around","Лес");
+        } else if(currentLocation==="Лес" && sceneId==="hut_knock"){ 
+            text=texts.hutKnockRes; addItem('еда',2);addItem('вода',2);addItem('спички',3); helpedOldWoman=true; 
+            addChoice(texts.choiceDeep,"forest_deep","Лес"); 
+            addChoice("← назад","forest_path","Лес");
+        } else if(currentLocation==="Лес" && sceneId==="hut_around"){ 
+            text=texts.hutAroundRes; addItem('нож',1); 
+            addChoice(texts.hutKnock,"hut_knock","Лес");
+        } else if(currentLocation==="Лес" && sceneId==="forest_deep"){ 
+            text=texts.forestDeep; 
+            addChoice("осмотреть дверь","bunker_door","Бункер"); 
+            addChoice("← назад","forest_path","Лес");
+        } else if(currentLocation==="Бункер" && sceneId==="bunker_door"){ 
+            text=texts.bunkerDoor; 
+            if(hasItem('карта')) addChoice("использовать карту","bunker_open","Бункер",'карта',1,'карта'); 
+            else addChoice("взломать","bunker_open","Бункер",'отмычка'); 
+            addChoice("← назад","forest_path","Лес");
+        } else if(currentLocation==="Бункер" && sceneId==="bunker_open"){ 
+            text=texts.bunkerOpenRes; addItem('еда',20);addItem('вода',20);addItem('аптечка',5);addItem('бинты',10); bunkerFound=true; 
+            addChoice("войти","bunker_inside","Бункер");
+        } else if(currentLocation==="Бункер" && sceneId==="bunker_inside"){ 
+            text=texts.bunkerInside; 
+            addChoice("остаться","final_good","Бункер");
+        } else if(currentLocation==="Бункер" && sceneId==="final_good"){ 
+            ending=texts.goodEnding; render(); return;
+        } else { 
+            addNext("street_start","Улица"); 
+            text=texts.defaultNext; 
+        }
+        let locationTag = `<span style="background:#1e1e2a; padding:3px 12px; border-radius:20px; font-size:12px;">📍 ${currentLocation}</span><br><br>`;
+        sceneEl.innerHTML = locationTag + text.replace(/\n/g,'<br>');
+        addToHistory(text); updateArrows(); updateInvDisplay();
+    }
+     
+    const arrowLeft=document.getElementById('arrowLeft'), arrowRight=document.getElementById('arrowRight');
+    arrowLeft.onclick=()=>{ 
+        if(historyIndex>0) { 
+            historyIndex--; 
+            sceneEl.innerText=history[historyIndex]; 
+            choicesEl.innerHTML=''; 
+            let btn=document.createElement('button'); 
+            btn.className='choice'; 
+            btn.innerText=texts.continueBtn; 
+            btn.onclick=()=>{ isViewingHistory=false; render(); }; 
+            choicesEl.appendChild(btn); 
+            isViewingHistory=true; 
+            updateArrows(); 
+        } 
+    };
+    arrowRight.onclick=()=>{ 
+        if(isViewingHistory && historyIndex<history.length-1){ 
+            historyIndex++; 
+            sceneEl.innerText=history[historyIndex]; 
+            choicesEl.innerHTML=''; 
+            let btn=document.createElement('button'); 
+            btn.className='choice'; 
+            btn.innerText=texts.continueBtn; 
+            btn.onclick=()=>{ isViewingHistory=false; render(); }; 
+            choicesEl.appendChild(btn); 
+            isViewingHistory=true; 
+            updateArrows(); 
+        } 
+    };
+     
+    function resetGame(){
+        inventory={'еда':0,'вода':0,'бинты':0,'аптечка':0,'батарейки':0,'спички':0,'верёвка':0,'отмычка':0,'нож':0,'фонарик':0,'рация':0,'карта':0};
+        currentLocation="Подъезд"; sceneId="start"; ending=null; replicaCount=0;
+        metGirl=false; injured=false; park=false; metStranger=false; metSurvivors=false; helpedOldWoman=false; radioFixed=false; hasKeyCard=false; bunkerFound=false;
+        history=[]; historyIndex=-1; isViewingHistory=false; updateInvDisplay(); render();
+    }
+    document.getElementById('resetBtn').onclick=resetGame;
+    
+    // Запуск игры
+    updateInvDisplay();
+    resetGame();
 </script>
 </body>
 </html>
